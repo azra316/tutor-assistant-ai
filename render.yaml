@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: tutor-assistant-ai-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
