@@ -1,25 +1,8 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:5000";
+import { postJson } from "../apiClient";
 
 export async function generateQuiz(payload) {
-  const response = await fetch(`${API_BASE_URL}/generate-quiz`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+  return postJson("/generate-quiz", payload, {
+    fallbackMessage: "Unable to generate quiz.",
+    invalidFormatMessage: "The quiz response was not in the expected format.",
   });
-
-  const result = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    const message = result?.message ?? "Unable to generate quiz.";
-    const details = Array.isArray(result?.errors) ? result.errors : [];
-    throw new Error(details.length > 0 ? `${message}: ${details.join(", ")}` : message);
-  }
-
-  if (!result?.success || !result?.data) {
-    throw new Error("The quiz response was not in the expected format.");
-  }
-
-  return result.data;
 }

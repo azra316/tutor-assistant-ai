@@ -16,8 +16,9 @@ Environment variables:
 
 ```txt
 NODE_ENV=production
-OPENAI_API_KEY=your_real_openai_api_key
-OPENAI_MODEL=gpt-4o-mini
+NODE_VERSION=20
+GEMINI_API_KEY=your_real_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
 CLIENT_ORIGIN=https://your-vercel-app.vercel.app
 ```
 

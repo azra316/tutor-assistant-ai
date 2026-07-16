@@ -10,14 +10,32 @@ import { errorHandler } from "./middleware/errorHandler.js";
 const app = express();
 
 const allowedOrigins = process.env.CLIENT_ORIGIN
-  ? process.env.CLIENT_ORIGIN.split(",").map((origin) => origin.trim())
-  : true;
+  ? process.env.CLIENT_ORIGIN.split(",")
+      .map((origin) => origin.trim().replace(/\/+$/, ""))
+      .filter(Boolean)
+  : [];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-  }),
-);
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    if (allowedOrigins.length === 0 && process.env.NODE_ENV !== "production") {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/health", (_request, response) => {
