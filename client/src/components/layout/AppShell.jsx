@@ -1,9 +1,9 @@
-import { Bell, Menu, Search, Sparkles } from "lucide-react";
+import { Bell, LogOut, Menu, Search, Sparkles, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 import { pages } from "../../data/navigation";
 import { Sidebar } from "./Sidebar";
 
-export function AppShell({ activePage, onNavigate, children }) {
+export function AppShell({ activePage, onNavigate, children, user, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const page = useMemo(
     () => pages.find((item) => item.id === activePage) ?? pages[0],
@@ -22,6 +22,8 @@ export function AppShell({ activePage, onNavigate, children }) {
         onNavigate={navigate}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        user={user}
+        onLogout={onLogout}
       />
 
       <div className="min-w-0">
@@ -58,12 +60,28 @@ export function AppShell({ activePage, onNavigate, children }) {
               New resource
             </button>
 
+            {user && (
+              <div className="hidden min-h-11 items-center gap-2 rounded-lg border border-slateboard/10 bg-white px-3 text-sm font-bold text-slateboard shadow-sm sm:flex">
+                <UserRound size={18} aria-hidden="true" />
+                <span className="max-w-36 truncate">{user.fullName}</span>
+              </div>
+            )}
+
             <button
               className="grid size-11 place-items-center rounded-lg border border-slateboard/10 bg-white text-slateboard shadow-sm"
               type="button"
               aria-label="Notifications"
             >
               <Bell size={19} />
+            </button>
+
+            <button
+              className="grid size-11 place-items-center rounded-lg border border-slateboard/10 bg-white text-coral shadow-sm transition hover:bg-coral/10"
+              type="button"
+              aria-label="Logout"
+              onClick={onLogout}
+            >
+              <LogOut size={19} />
             </button>
           </div>
         </header>

@@ -6,18 +6,38 @@ export const API_BASE_URL = normalizeApiBaseUrl(
   configuredApiBaseUrl || (import.meta.env.DEV ? DEFAULT_LOCAL_API_BASE_URL : ""),
 );
 
-export async function postJson(path, payload, options) {
+export async function postJson(path, payload, options = {}) {
   const { fallbackMessage, invalidFormatMessage } = options;
-  const url = buildApiUrl(path);
-  let response;
-
-  try {
-    response = await fetch(url, {
+  const result = await requestJson(
+    path,
+    {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+    },
+    { fallbackMessage },
+  );
+
+  if (!result?.success || !result?.data) {
+    throw new Error(invalidFormatMessage);
+  }
+
+  return result.data;
+}
+
+export async function requestJson(path, fetchOptions = {}, options = {}) {
+  const url = buildApiUrl(path);
+  let response;
+
+  try {
+    response = await fetch(url, {
+      credentials: "include",
+      ...fetchOptions,
+      headers: {
+        ...(fetchOptions.headers ?? {}),
+      },
     });
   } catch {
     throw new Error(
@@ -28,16 +48,12 @@ export async function postJson(path, payload, options) {
   const result = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message = result?.message ?? fallbackMessage;
+    const message = result?.message ?? options.fallbackMessage ?? "Request failed.";
     const details = Array.isArray(result?.errors) ? result.errors : [];
     throw new Error(details.length > 0 ? `${message}: ${details.join(", ")}` : message);
   }
 
-  if (!result?.success || !result?.data) {
-    throw new Error(invalidFormatMessage);
-  }
-
-  return result.data;
+  return result;
 }
 
 function buildApiUrl(path) {

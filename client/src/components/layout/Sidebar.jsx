@@ -1,7 +1,7 @@
-import { BookMarked, PanelLeftClose, Sparkles } from "lucide-react";
+import { BookMarked, LogOut, PanelLeftClose, Sparkles, UserRound } from "lucide-react";
 import { pages } from "../../data/navigation";
 
-export function Sidebar({ activePage, onNavigate, isOpen, onClose }) {
+export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogout }) {
   return (
     <>
       <div
@@ -58,6 +58,28 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose }) {
             );
           })}
         </nav>
+
+        {user && (
+          <div className="mx-4 rounded-lg bg-white/10 p-4">
+            <div className="flex items-center gap-3">
+              <div className="grid size-10 place-items-center rounded-lg bg-white text-slateboard">
+                <UserRound size={19} aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black">{user.fullName}</p>
+                <p className="truncate text-xs font-semibold text-white/62">{user.email}</p>
+              </div>
+            </div>
+            <button
+              className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-white/10 text-sm font-bold text-white transition hover:bg-white/15"
+              type="button"
+              onClick={onLogout}
+            >
+              <LogOut size={17} aria-hidden="true" />
+              Logout
+            </button>
+          </div>
+        )}
 
         <div className="m-4 rounded-lg bg-white/10 p-4">
           <div className="mb-3 flex items-center gap-2 text-sm font-bold">

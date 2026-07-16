@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import authRoutes from "./routes/auth.routes.js";
 import worksheetRoutes from "./routes/worksheet.routes.js";
 import quizRoutes from "./routes/quiz.routes.js";
 import homeworkRoutes from "./routes/homework.routes.js";
@@ -31,6 +32,7 @@ const corsOptions = {
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
   optionsSuccessStatus: 204,
 };
 
@@ -45,6 +47,7 @@ app.get("/health", (_request, response) => {
   });
 });
 
+app.use(authRoutes);
 app.use("/", worksheetRoutes);
 app.use("/", quizRoutes);
 app.use("/", homeworkRoutes);
