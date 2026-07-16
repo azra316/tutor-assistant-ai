@@ -17,6 +17,7 @@ Environment variables:
 ```txt
 NODE_ENV=production
 NODE_VERSION=20
+MONGODB_URI=your_mongodb_atlas_connection_string
 GEMINI_API_KEY=your_real_gemini_api_key
 GEMINI_MODEL=gemini-3.5-flash
 CLIENT_ORIGIN=https://your-vercel-app.vercel.app
