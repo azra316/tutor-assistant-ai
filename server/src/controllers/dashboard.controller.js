@@ -1,4 +1,4 @@
-import { getUserGenerationStats } from "../services/resourceGeneration.service.js";
+import { getUserGenerationStats } from "../services/generatedResource.service.js";
 
 export async function getDashboardStats(request, response, next) {
   try {

@@ -4,6 +4,7 @@ import {
   GraduationCap,
   HelpCircle,
   LayoutDashboard,
+  Library,
   NotebookPen,
   Sparkles,
 } from "lucide-react";
@@ -17,6 +18,15 @@ export const pages = [
     title: "Teacher Dashboard",
     description:
       "Plan faster, differentiate instruction, and keep every classroom resource organized.",
+  },
+  {
+    id: "resources",
+    label: "My Resources",
+    icon: Library,
+    eyebrow: "Saved Library",
+    title: "My Resources",
+    description:
+      "Manage saved worksheets, quizzes, homework, lesson plans, and topic explanations.",
   },
   {
     id: "worksheet",

@@ -1,18 +1,17 @@
 import { createWorksheet } from "../services/worksheet.service.js";
 import {
   addTeacherMetadata,
-  recordGeneration,
-} from "../services/resourceGeneration.service.js";
+  saveGeneratedResource,
+} from "../services/generatedResource.service.js";
 
 export async function generateWorksheet(request, response, next) {
   try {
     const worksheet = addTeacherMetadata(await createWorksheet(request.validatedBody), request.user);
 
-    await recordGeneration({
+    await saveGeneratedResource({
       userId: request.user._id,
       type: "worksheet",
       resource: worksheet,
-      request: request.validatedBody,
     });
 
     response.status(200).json({

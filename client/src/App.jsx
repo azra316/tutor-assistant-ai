@@ -7,6 +7,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { GeneratorPage } from "./pages/GeneratorPage";
 import { HomeworkGeneratorPage } from "./pages/HomeworkGeneratorPage";
 import { LessonPlannerPage } from "./pages/LessonPlannerPage";
+import { MyResourcesPage } from "./pages/MyResourcesPage";
 import { QuizGeneratorPage } from "./pages/QuizGeneratorPage";
 import { TopicExplainerPage } from "./pages/TopicExplainerPage";
 import { WorksheetGeneratorPage } from "./pages/WorksheetGeneratorPage";
@@ -68,6 +69,7 @@ export default function App() {
           />
         )}
         {activePage === "dashboard" && <Dashboard onNavigate={setActivePage} />}
+        {activePage === "resources" && <MyResourcesPage />}
         {activePage === "worksheet" && <WorksheetGeneratorPage />}
         {activePage === "quiz" && <QuizGeneratorPage />}
         {activePage === "homework" && <HomeworkGeneratorPage />}
@@ -75,6 +77,7 @@ export default function App() {
         {activePage === "explainer" && <TopicExplainerPage />}
         {isKnownPage &&
           activePage !== "dashboard" &&
+          activePage !== "resources" &&
           activePage !== "worksheet" &&
           activePage !== "quiz" &&
           activePage !== "homework" &&

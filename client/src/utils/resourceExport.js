@@ -1,0 +1,106 @@
+export function stringifyResource(resource) {
+  return JSON.stringify(resource.content ?? resource, null, 2);
+}
+
+export function printResource(resource) {
+  const printWindow = window.open("", "_blank");
+
+  if (!printWindow) {
+    throw new Error("Popup blocked. Allow popups to print this resource.");
+  }
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>${escapeHtml(resource.title)}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 32px; color: #17313B; }
+          h1 { margin-bottom: 8px; }
+          pre { white-space: pre-wrap; line-height: 1.5; background: #F6F8F7; padding: 16px; border-radius: 8px; }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeHtml(resource.title)}</h1>
+        <p>${escapeHtml(resource.type)}</p>
+        <pre>${escapeHtml(stringifyResource(resource))}</pre>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
+export function downloadResourcePdf(resource) {
+  const lines = [`${resource.title}`, `${formatType(resource.type)}`, "", ...stringifyResource(resource).split("\n")];
+  const pdf = createSimplePdf(lines);
+  const blob = new Blob([pdf], { type: "application/pdf" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${slugify(resource.title)}.pdf`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function createSimplePdf(lines) {
+  const escapedLines = lines.flatMap((line) => wrapLine(line, 88)).slice(0, 58);
+  const content = [
+    "BT",
+    "/F1 11 Tf",
+    "50 780 Td",
+    "14 TL",
+    ...escapedLines.map((line) => `(${escapePdfText(line)}) Tj T*`),
+    "ET",
+  ].join("\n");
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`,
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+
+  objects.forEach((object, index) => {
+    offsets.push(pdf.length);
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  pdf += offsets.slice(1).map((offset) => `${String(offset).padStart(10, "0")} 00000 n \n`).join("");
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return pdf;
+}
+
+function wrapLine(line, maxLength) {
+  if (line.length <= maxLength) return [line];
+  const chunks = [];
+  for (let index = 0; index < line.length; index += maxLength) {
+    chunks.push(line.slice(index, index + maxLength));
+  }
+  return chunks;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  })[char]);
+}
+
+function escapePdfText(value) {
+  return String(value).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+function slugify(value) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "resource";
+}
+
+function formatType(type) {
+  return type.replace(/([A-Z])/g, " $1").replace(/^./, (char) => char.toUpperCase());
+}

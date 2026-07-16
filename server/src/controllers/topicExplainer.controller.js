@@ -1,8 +1,8 @@
 import { createTopicExplanation } from "../services/topicExplainer.service.js";
 import {
   addTeacherMetadata,
-  recordGeneration,
-} from "../services/resourceGeneration.service.js";
+  saveGeneratedResource,
+} from "../services/generatedResource.service.js";
 
 export async function explainTopic(request, response, next) {
   try {
@@ -11,11 +11,10 @@ export async function explainTopic(request, response, next) {
       request.user,
     );
 
-    await recordGeneration({
+    await saveGeneratedResource({
       userId: request.user._id,
       type: "topicExplanation",
       resource: explanation,
-      request: request.validatedBody,
     });
 
     response.status(200).json({
