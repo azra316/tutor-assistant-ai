@@ -18,7 +18,9 @@ import { Badge, Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { LoadingSkeleton, useToast } from "../components/ui/Feedback";
 import { Field, Select, TextInput } from "../components/ui/FormControls";
+import { useAuth } from "../features/auth/AuthContext";
 import { generateQuiz } from "../features/quizzes/quizApi";
+import { formatToday } from "../utils/date";
 
 const difficultyOptions = ["Easy", "Medium", "Challenging", "Mixed"];
 
@@ -80,10 +82,13 @@ export function QuizGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   const draftQuestions = useMemo(() => createDraftQuestions(form), [form]);
   const questions = quiz?.questions ?? draftQuestions;
   const isGenerated = Boolean(quiz);
+  const teacherName = quiz?.teacherName ?? user?.fullName ?? "Teacher";
+  const generatedDate = quiz?.generatedDate ?? formatToday();
 
   function updateField(field, value) {
     const nextValue =
@@ -316,7 +321,9 @@ export function QuizGeneratorPage() {
               </div>
 
               <div className="rounded-lg bg-chalk p-4 text-sm font-bold text-slateboard">
-                Name: ____________________
+                Teacher: {teacherName}
+                <br />
+                Date: {generatedDate}
                 <br />
                 Score: ______ / ______
               </div>

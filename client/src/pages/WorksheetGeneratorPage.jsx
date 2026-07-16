@@ -15,7 +15,9 @@ import { Badge, Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { LoadingSkeleton, useToast } from "../components/ui/Feedback";
 import { Field, Select, TextInput } from "../components/ui/FormControls";
+import { useAuth } from "../features/auth/AuthContext";
 import { generateWorksheet } from "../features/worksheets/worksheetApi";
+import { formatToday } from "../utils/date";
 
 const difficultyOptions = ["Easy", "Medium", "Challenging", "Mixed"];
 
@@ -61,10 +63,13 @@ export function WorksheetGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   const questions = useMemo(() => createQuestions(form), [form]);
   const displayedQuestions = worksheet?.questions ?? questions;
   const isGenerated = Boolean(worksheet);
+  const teacherName = worksheet?.teacherName ?? user?.fullName ?? "Teacher";
+  const generatedDate = worksheet?.generatedDate ?? formatToday();
 
   function updateField(field, value) {
     const nextValue =
@@ -297,9 +302,9 @@ export function WorksheetGeneratorPage() {
               </div>
 
               <div className="rounded-lg bg-chalk p-4 text-sm font-bold text-slateboard">
-                Name: ____________________
+                Teacher: {teacherName}
                 <br />
-                Date: _____________________
+                Date: {generatedDate}
               </div>
             </div>
           </section>

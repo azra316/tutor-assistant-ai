@@ -18,7 +18,9 @@ import { Badge, Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { LoadingSkeleton, useToast } from "../components/ui/Feedback";
 import { Field, TextInput } from "../components/ui/FormControls";
+import { useAuth } from "../features/auth/AuthContext";
 import { generateLessonPlan } from "../features/lessons/lessonPlanApi";
+import { formatToday } from "../utils/date";
 
 function createDraftLessonPlan({ topic, duration }) {
   const safeTopic = topic.trim() || "the selected topic";
@@ -86,6 +88,7 @@ export function LessonPlannerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   const draftLessonPlan = useMemo(() => createDraftLessonPlan(form), [form]);
   const objectives = lessonPlan?.objectives ?? draftLessonPlan.objectives;
@@ -93,6 +96,8 @@ export function LessonPlannerPage() {
   const teachingSteps = lessonPlan?.teachingSteps ?? draftLessonPlan.teachingSteps;
   const assessment = lessonPlan?.assessment ?? draftLessonPlan.assessment;
   const isGenerated = Boolean(lessonPlan);
+  const teacherName = lessonPlan?.teacherName ?? user?.fullName ?? "Teacher";
+  const generatedDate = lessonPlan?.generatedDate ?? formatToday();
 
   function updateField(field, value) {
     setForm((current) => ({
@@ -293,9 +298,9 @@ export function LessonPlannerPage() {
               </div>
 
               <div className="rounded-lg bg-chalk p-4 text-sm font-bold text-slateboard">
-                Date: ____________________
+                Date: {generatedDate}
                 <br />
-                Teacher: _________________
+                Teacher: {teacherName}
               </div>
             </div>
           </section>

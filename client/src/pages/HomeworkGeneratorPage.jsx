@@ -16,7 +16,9 @@ import { Badge, Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { LoadingSkeleton, useToast } from "../components/ui/Feedback";
 import { Field, TextInput } from "../components/ui/FormControls";
+import { useAuth } from "../features/auth/AuthContext";
 import { generateHomework } from "../features/homework/homeworkApi";
+import { formatToday } from "../utils/date";
 
 function createDraftHomework({ topic, subject }) {
   const safeTopic = topic.trim() || "the selected topic";
@@ -60,10 +62,13 @@ export function HomeworkGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   const draftHomework = useMemo(() => createDraftHomework(form), [form]);
   const homeworkItems = homework?.homework ?? draftHomework;
   const isGenerated = Boolean(homework);
+  const teacherName = homework?.teacherName ?? user?.fullName ?? "Teacher";
+  const generatedDate = homework?.generatedDate ?? formatToday();
 
   function updateField(field, value) {
     setForm((current) => ({
@@ -270,9 +275,9 @@ export function HomeworkGeneratorPage() {
               </div>
 
               <div className="rounded-lg bg-chalk p-4 text-sm font-bold text-slateboard">
-                Name: ____________________
+                Teacher: {teacherName}
                 <br />
-                Due: _____________________
+                Date: {generatedDate}
               </div>
             </div>
           </section>

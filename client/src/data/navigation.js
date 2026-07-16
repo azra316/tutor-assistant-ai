@@ -14,7 +14,7 @@ export const pages = [
     label: "Dashboard",
     icon: LayoutDashboard,
     eyebrow: "Overview",
-    title: "Good afternoon, Ms. Rivera",
+    title: "Teacher Dashboard",
     description:
       "Plan faster, differentiate instruction, and keep every classroom resource organized.",
   },
@@ -63,40 +63,6 @@ export const pages = [
     description:
       "Turn complex topics into simple explanations, examples, and analogies.",
   },
-];
-
-export const quickActions = [
-  "Create Grade 6 fractions worksheet",
-  "Draft biology exit ticket",
-  "Plan a 45-minute grammar lesson",
-  "Explain photosynthesis simply",
-];
-
-export const recentGenerations = [
-  {
-    title: "Linear Equations Practice",
-    type: "Worksheet",
-    className: "Algebra 1",
-    time: "12 min ago",
-  },
-  {
-    title: "Main Idea Exit Ticket",
-    type: "Quiz",
-    className: "Grade 5 ELA",
-    time: "38 min ago",
-  },
-  {
-    title: "Civil War Lesson Arc",
-    type: "Lesson Plan",
-    className: "Grade 8 History",
-    time: "Yesterday",
-  },
-];
-
-export const dashboardStats = [
-  { label: "Resources created", value: "128", change: "+18 this week" },
-  { label: "Hours saved", value: "42", change: "Estimated planning time" },
-  { label: "Active classes", value: "7", change: "Across 4 subjects" },
 ];
 
 export const generatorPresets = {

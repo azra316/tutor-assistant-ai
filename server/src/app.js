@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 import worksheetRoutes from "./routes/worksheet.routes.js";
 import quizRoutes from "./routes/quiz.routes.js";
 import homeworkRoutes from "./routes/homework.routes.js";
@@ -48,6 +49,7 @@ app.get("/health", (_request, response) => {
 });
 
 app.use(authRoutes);
+app.use(dashboardRoutes);
 app.use("/", worksheetRoutes);
 app.use("/", quizRoutes);
 app.use("/", homeworkRoutes);

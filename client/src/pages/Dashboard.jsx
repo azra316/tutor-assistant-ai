@@ -1,27 +1,105 @@
-import { ArrowRight, CalendarDays, CheckCircle2, Clock3, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  dashboardStats,
-  quickActions,
-  recentGenerations,
-} from "../data/navigation";
+  BookOpenCheck,
+  ClipboardList,
+  FileText,
+  GraduationCap,
+  HelpCircle,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+  TriangleAlert,
+} from "lucide-react";
 import { Badge, Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
+import { EmptyState } from "../components/ui/Feedback";
+import { useAuth } from "../features/auth/AuthContext";
+import { fetchDashboardStats } from "../features/dashboard/dashboardApi";
+import { formatToday } from "../utils/date";
+
+const statCards = [
+  {
+    key: "totalWorksheets",
+    label: "Total Worksheets",
+    icon: FileText,
+    tone: "bg-meadow text-white",
+  },
+  {
+    key: "totalQuizzes",
+    label: "Total Quizzes",
+    icon: ClipboardList,
+    tone: "bg-coral text-white",
+  },
+  {
+    key: "totalHomework",
+    label: "Total Homework",
+    icon: BookOpenCheck,
+    tone: "bg-honey text-slateboard",
+  },
+  {
+    key: "totalLessonPlans",
+    label: "Total Lesson Plans",
+    icon: GraduationCap,
+    tone: "bg-slateboard text-white",
+  },
+  {
+    key: "totalTopicExplanations",
+    label: "Total Topic Explanations",
+    icon: HelpCircle,
+    tone: "bg-[#4E6E81] text-white",
+  },
+];
+
+const emptyStats = {
+  totalWorksheets: 0,
+  totalQuizzes: 0,
+  totalHomework: 0,
+  totalLessonPlans: 0,
+  totalTopicExplanations: 0,
+};
 
 export function Dashboard({ onNavigate }) {
+  const { user } = useAuth();
+  const [stats, setStats] = useState(emptyStats);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const totalResources = useMemo(
+    () => Object.values(stats).reduce((total, value) => total + Number(value || 0), 0),
+    [stats],
+  );
+
+  async function loadStats() {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      setStats(await fetchDashboardStats());
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
   return (
     <div className="grid gap-6">
       <section className="animate-fade-in overflow-hidden rounded-lg bg-slateboard text-white shadow-soft">
-        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_22rem] lg:items-center">
+        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_20rem] lg:items-center">
           <div>
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-sm font-bold text-white/86">
               <Sparkles size={16} aria-hidden="true" />
-              Planning workspace
+              Live teacher dashboard
             </div>
             <h2 className="max-w-3xl text-3xl font-black leading-tight sm:text-4xl">
-              Create classroom-ready materials with calm, focused AI support.
+              Welcome back, {user?.fullName ?? "Teacher"}.
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-7 text-white/72">
-              Build differentiated worksheets, quizzes, homework, lesson plans, and explainers from one polished teacher dashboard.
+              Your dashboard now shows real MongoDB counts for resources generated from your account only.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button onClick={() => onNavigate("worksheet")}>Start worksheet</Button>
@@ -32,80 +110,64 @@ export function Dashboard({ onNavigate }) {
           </div>
 
           <div className="rounded-lg bg-white p-4 text-slateboard">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="font-black">Today&apos;s planning block</p>
-              <Badge tone="honey">45 min</Badge>
+            <p className="text-sm font-bold text-slateboard/58">Today</p>
+            <p className="mt-2 text-xl font-black">{formatToday()}</p>
+            <div className="mt-4 rounded-lg bg-skywash p-4">
+              <p className="text-sm font-bold text-slateboard/58">Total generated</p>
+              <p className="mt-2 text-3xl font-black">{totalResources}</p>
             </div>
-            {["Warm-up: fractions review", "Quiz: cell structure", "Homework: thesis statements"].map(
-              (item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-3 border-t border-slateboard/10 py-3 text-sm font-semibold"
-                >
-                  <CheckCircle2 className="text-meadow" size={18} aria-hidden="true" />
-                  {item}
-                </div>
-              ),
-            )}
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        {dashboardStats.map((stat) => (
-          <Card key={stat.label}>
-            <p className="text-sm font-bold text-slateboard/58">{stat.label}</p>
-            <p className="mt-3 text-3xl font-black text-slateboard">{stat.value}</p>
-            <p className="mt-2 text-sm font-semibold text-meadow">{stat.change}</p>
-          </Card>
-        ))}
-      </section>
-
-      <section className="grid gap-6 xl:grid-cols-[1fr_24rem]">
-        <Card>
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-black text-slateboard">Quick actions</h2>
-              <p className="text-sm text-slateboard/60">Reusable prompts for common planning tasks.</p>
-            </div>
-            <Badge tone="blue">Teacher favorites</Badge>
+      {error && (
+        <section
+          className="flex items-start gap-3 rounded-lg border border-coral/30 bg-coral/10 p-4 text-sm text-slateboard"
+          role="alert"
+          aria-live="assertive"
+        >
+          <TriangleAlert className="mt-0.5 shrink-0 text-coral" size={20} aria-hidden="true" />
+          <div className="min-w-0 flex-1">
+            <h3 className="font-black text-coral">Could not load dashboard statistics</h3>
+            <p className="mt-1 leading-6">{error}</p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {quickActions.map((action) => (
-              <button
-                key={action}
-                type="button"
-                className="flex min-h-20 items-center justify-between rounded-lg border border-slateboard/10 bg-chalk px-4 text-left font-bold text-slateboard transition duration-200 hover:-translate-y-0.5 hover:border-meadow/40 hover:bg-skywash hover:shadow-soft"
-              >
-                <span>{action}</span>
-                <ArrowRight size={18} aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-        </Card>
+          <Button type="button" variant="secondary" onClick={loadStats}>
+            <RefreshCw size={16} aria-hidden="true" />
+            Retry
+          </Button>
+        </section>
+      )}
 
-        <Card>
-          <h2 className="text-lg font-black text-slateboard">Recent generations</h2>
-          <div className="mt-4 space-y-4">
-            {recentGenerations.map((item) => (
-              <article key={item.title} className="rounded-lg border border-slateboard/10 p-4 transition duration-200 hover:border-meadow/30 hover:bg-skywash">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <Badge tone={item.type === "Quiz" ? "coral" : "green"}>{item.type}</Badge>
-                  <span className="flex items-center gap-1.5 text-xs font-bold text-slateboard/50">
-                    <Clock3 size={14} aria-hidden="true" />
-                    {item.time}
-                  </span>
-                </div>
-                <h3 className="font-black text-slateboard">{item.title}</h3>
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-slateboard/60">
-                  <CalendarDays size={15} aria-hidden="true" />
-                  {item.className}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {statCards.map((stat) => {
+          const Icon = stat.icon;
+
+          return (
+            <Card key={stat.key} className="min-h-36">
+              <div className={`grid size-11 place-items-center rounded-lg ${stat.tone}`}>
+                <Icon size={22} aria-hidden="true" />
+              </div>
+              <p className="mt-5 text-sm font-bold text-slateboard/58">{stat.label}</p>
+              {isLoading ? (
+                <div className="mt-3 h-9 w-16 rounded-lg bg-slateboard/10 skeleton" />
+              ) : (
+                <p className="mt-3 text-3xl font-black text-slateboard">
+                  {stats[stat.key] ?? 0}
                 </p>
-              </article>
-            ))}
-          </div>
-        </Card>
+              )}
+            </Card>
+          );
+        })}
       </section>
+
+      {!isLoading && !error && totalResources === 0 && (
+        <EmptyState
+          icon={FileText}
+          title="No generated resources yet"
+          description="Create your first worksheet, quiz, homework, lesson plan, or topic explanation to see real counts here."
+          action={<Button onClick={() => onNavigate("worksheet")}>Create worksheet</Button>}
+        />
+      )}
     </div>
   );
 }

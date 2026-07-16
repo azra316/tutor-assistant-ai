@@ -16,7 +16,9 @@ import { Badge, Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { LoadingSkeleton, useToast } from "../components/ui/Feedback";
 import { Field, TextInput } from "../components/ui/FormControls";
+import { useAuth } from "../features/auth/AuthContext";
 import { explainTopic } from "../features/explainers/topicExplainerApi";
+import { formatToday } from "../utils/date";
 
 function createDraftExplanation({ topic, className }) {
   const safeTopic = topic.trim() || "the selected topic";
@@ -46,10 +48,13 @@ export function TopicExplainerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const { user } = useAuth();
 
   const draftExplanation = createDraftExplanation(form);
   const displayedExplanation = explanation ?? draftExplanation;
   const isGenerated = Boolean(explanation);
+  const teacherName = explanation?.teacherName ?? user?.fullName ?? "Teacher";
+  const generatedDate = explanation?.generatedDate ?? formatToday();
 
   function updateField(field, value) {
     setForm((current) => ({
@@ -246,9 +251,9 @@ export function TopicExplainerPage() {
               </div>
 
               <div className="rounded-lg bg-chalk p-4 text-sm font-bold text-slateboard">
-                Name: ____________________
+                Teacher: {teacherName}
                 <br />
-                Date: _____________________
+                Date: {generatedDate}
               </div>
             </div>
           </section>
