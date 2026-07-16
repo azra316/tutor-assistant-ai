@@ -31,8 +31,9 @@ export default function App() {
 
   if (isAuthLoading) {
     return (
-      <div className="grid min-h-screen place-items-center bg-chalk px-4">
+      <div className="grid min-h-screen place-items-center bg-chalk px-4" aria-busy="true" aria-live="polite">
         <div className="w-full max-w-md rounded-lg border border-slateboard/10 bg-white p-6 shadow-soft">
+          <p className="sr-only">Loading your secure workspace</p>
           <div className="mb-4 h-4 w-40 rounded-full skeleton" />
           <div className="grid gap-3">
             <div className="h-3 rounded-full skeleton" />
@@ -63,6 +64,7 @@ export default function App() {
       <ErrorBoundary onReset={() => setActivePage("dashboard")}>
         {!isKnownPage && (
           <ErrorPage
+            statusCode="404"
             title="Page not found"
             description="That workspace page is not available yet."
             onReset={() => setActivePage("dashboard")}

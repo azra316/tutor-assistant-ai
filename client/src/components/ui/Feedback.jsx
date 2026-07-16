@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Inbox, Loader2, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Inbox, Loader2, SearchX, X } from "lucide-react";
 import { Component, createContext, useContext, useMemo, useState } from "react";
 import { Button } from "./Button";
 
@@ -22,14 +22,18 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 grid w-[min(24rem,calc(100vw-2rem))] gap-3">
+      <div
+        className="fixed bottom-4 right-4 z-50 grid w-[min(24rem,calc(100vw-2rem))] gap-3"
+        aria-live="polite"
+        aria-relevant="additions removals"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`animate-toast-in rounded-lg border bg-white p-4 shadow-soft ${
+            className={`animate-toast-in rounded-lg border bg-white p-4 shadow-soft dark:bg-[#17313B] ${
               toast.tone === "error" ? "border-coral/25" : "border-meadow/25"
             }`}
-            role="status"
+            role={toast.tone === "error" ? "alert" : "status"}
           >
             <div className="flex items-start gap-3">
               {toast.tone === "error" ? (
@@ -71,7 +75,11 @@ export function useToast() {
 
 export function LoadingSkeleton({ title = "Generating content", lines = 4 }) {
   return (
-    <section className="animate-fade-in rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft">
+    <section
+      className="animate-fade-in rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft dark:bg-[#17313B]"
+      aria-busy="true"
+      aria-live="polite"
+    >
       <div className="mb-4 flex items-center gap-3">
         <div className="grid size-10 place-items-center rounded-lg bg-skywash text-slateboard">
           <Loader2 className="animate-spin" size={19} aria-hidden="true" />
@@ -100,7 +108,7 @@ export function EmptyState({
   action,
 }) {
   return (
-    <section className="animate-fade-in rounded-lg border border-dashed border-slateboard/20 bg-white p-6 text-center">
+    <section className="animate-fade-in rounded-lg border border-dashed border-slateboard/20 bg-white p-6 text-center dark:bg-[#17313B]">
       <div className="mx-auto grid size-12 place-items-center rounded-lg bg-skywash text-slateboard">
         <Icon size={23} aria-hidden="true" />
       </div>
@@ -112,17 +120,28 @@ export function EmptyState({
 }
 
 export function ErrorPage({
+  statusCode = "500",
   title = "Something went wrong",
   description = "The page could not be loaded. Try returning to the dashboard.",
   onReset,
 }) {
   return (
     <div className="grid min-h-[60vh] place-items-center">
-      <section className="max-w-xl rounded-lg border border-coral/20 bg-white p-8 text-center shadow-soft">
+      <section
+        className="max-w-xl rounded-lg border border-coral/20 bg-white p-8 text-center shadow-soft dark:bg-[#17313B]"
+        role="alert"
+      >
         <div className="mx-auto grid size-14 place-items-center rounded-lg bg-coral/10 text-coral">
-          <AlertTriangle size={28} aria-hidden="true" />
+          {String(statusCode) === "404" ? (
+            <SearchX size={28} aria-hidden="true" />
+          ) : (
+            <AlertTriangle size={28} aria-hidden="true" />
+          )}
         </div>
-        <h2 className="mt-5 text-2xl font-black text-slateboard">{title}</h2>
+        <p className="mt-5 text-xs font-black uppercase tracking-[0.18em] text-coral">
+          Error {statusCode}
+        </p>
+        <h2 className="mt-2 text-2xl font-black text-slateboard">{title}</h2>
         <p className="mt-3 text-sm leading-6 text-slateboard/65">{description}</p>
         {onReset && (
           <Button className="mt-5" type="button" onClick={onReset}>
@@ -144,10 +163,16 @@ export class ErrorBoundary extends Component {
     return { hasError: true };
   }
 
+  componentDidCatch(error, info) {
+    console.error("UI error boundary caught an error", error, info);
+  }
+
   render() {
     if (this.state.hasError) {
       return (
         <ErrorPage
+          statusCode="500"
+          title="Something went wrong"
           description="A UI error interrupted this page. Return to the dashboard and try again."
           onReset={() => {
             this.setState({ hasError: false });
