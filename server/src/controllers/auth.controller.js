@@ -14,6 +14,10 @@ export async function register(request, response, next) {
       throw new ApiError(400, "Password must be at least 8 characters");
     }
 
+    if (password.length > 128) {
+      throw new ApiError(400, "Password must be 128 characters or less");
+    }
+
     const normalizedEmail = email.trim().toLowerCase();
     const existingUser = await User.findOne({ email: normalizedEmail });
 
@@ -33,7 +37,6 @@ export async function register(request, response, next) {
     response.status(201).json({
       success: true,
       message: "Registration successful",
-      token,
       user: user.toSafeObject(),
     });
   } catch (error) {
@@ -52,6 +55,10 @@ export async function login(request, response, next) {
 
     if (!email?.trim() || !password) {
       throw new ApiError(400, "Email and password are required");
+    }
+
+    if (password.length > 128) {
+      throw new ApiError(400, "Invalid email or password");
     }
 
     const user = await User.findOne({ email: email.trim().toLowerCase() }).select("+password");
@@ -73,7 +80,6 @@ export async function login(request, response, next) {
     response.status(200).json({
       success: true,
       message: "Login successful",
-      token,
       user: user.toSafeObject(),
     });
   } catch (error) {

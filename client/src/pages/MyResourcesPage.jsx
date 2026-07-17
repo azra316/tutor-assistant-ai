@@ -60,6 +60,7 @@ export function MyResourcesPage() {
   const [editContent, setEditContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [activeAction, setActiveAction] = useState("");
   const [error, setError] = useState("");
   const { showToast } = useToast();
 
@@ -116,6 +117,7 @@ export function MyResourcesPage() {
 
   async function handleSaveEdit(event) {
     event.preventDefault();
+    setActiveAction("save");
 
     try {
       const parsedContent = JSON.parse(editContent);
@@ -128,12 +130,19 @@ export function MyResourcesPage() {
       await loadResources(filters);
       showToast({ title: "Resource updated", description: `${updated.title} was saved.` });
     } catch (saveError) {
-      showToast({ title: "Update failed", description: saveError.message, tone: "error" });
+      showToast({
+        title: "Update failed",
+        description: saveError instanceof SyntaxError ? "Content JSON is invalid." : saveError.message,
+        tone: "error",
+      });
+    } finally {
+      setActiveAction("");
     }
   }
 
   async function handleDelete(resource) {
     if (!window.confirm(`Delete "${resource.title}"?`)) return;
+    setActiveAction(`delete-${resource.id}`);
 
     try {
       await deleteResource(resource.id);
@@ -142,16 +151,22 @@ export function MyResourcesPage() {
       showToast({ title: "Resource deleted", description: `${resource.title} was removed.` });
     } catch (requestError) {
       showToast({ title: "Delete failed", description: requestError.message, tone: "error" });
+    } finally {
+      setActiveAction("");
     }
   }
 
   async function handleDuplicate(resource) {
+    setActiveAction(`duplicate-${resource.id}`);
+
     try {
       const duplicated = await duplicateResource(resource.id);
       await loadResources({ ...filters, page: 1 });
       showToast({ title: "Resource duplicated", description: `${duplicated.title} was created.` });
     } catch (requestError) {
       showToast({ title: "Duplicate failed", description: requestError.message, tone: "error" });
+    } finally {
+      setActiveAction("");
     }
   }
 
@@ -208,7 +223,7 @@ export function MyResourcesPage() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-bold text-slateboard/60">
-          {activeTypeLabel} · {pagination.total} saved
+          {activeTypeLabel} / {pagination.total} saved
         </p>
         <Button type="button" variant="secondary" onClick={() => loadResources(filters)}>
           <RefreshCw size={16} aria-hidden="true" />
@@ -250,12 +265,12 @@ export function MyResourcesPage() {
               <p className="mt-2 text-sm text-slateboard/55">Updated {formatDate(resource.updatedAt)}</p>
 
               <div className="mt-auto grid grid-cols-3 gap-2 pt-5">
-                <IconButton label="View" icon={Eye} onClick={() => openResource(resource)} />
-                <IconButton label="Edit" icon={Edit3} onClick={() => openResource(resource, "edit")} />
-                <IconButton label="Delete" icon={Trash2} onClick={() => handleDelete(resource)} danger />
-                <IconButton label="Duplicate" icon={Copy} onClick={() => handleDuplicate(resource)} />
-                <IconButton label="Print" icon={Printer} onClick={() => withResourceDetail(resource, printResource)} />
-                <IconButton label="PDF" icon={Download} onClick={() => withResourceDetail(resource, downloadResourcePdf)} />
+                <IconButton label="View" icon={Eye} onClick={() => openResource(resource)} disabled={Boolean(activeAction)} />
+                <IconButton label="Edit" icon={Edit3} onClick={() => openResource(resource, "edit")} disabled={Boolean(activeAction)} />
+                <IconButton label="Delete" icon={Trash2} onClick={() => handleDelete(resource)} disabled={Boolean(activeAction)} danger />
+                <IconButton label="Duplicate" icon={Copy} onClick={() => handleDuplicate(resource)} disabled={Boolean(activeAction)} />
+                <IconButton label="Print" icon={Printer} onClick={() => withResourceDetail(resource, printResource)} disabled={Boolean(activeAction)} />
+                <IconButton label="PDF" icon={Download} onClick={() => withResourceDetail(resource, downloadResourcePdf)} disabled={Boolean(activeAction)} />
               </div>
             </Card>
           ))}
@@ -305,6 +320,7 @@ export function MyResourcesPage() {
             setEditingResource(null);
           }}
           onSave={handleSaveEdit}
+          isSaving={activeAction === "save"}
           onPrint={() => printResource(selectedResource)}
           onPdf={() => downloadResourcePdf(selectedResource)}
         />
@@ -324,20 +340,31 @@ function ResourceModal({
   onEdit,
   onClose,
   onSave,
+  isSaving,
   onPrint,
   onPdf,
 }) {
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-slateboard/45 p-4">
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-slateboard/45 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="resource-dialog-title"
+    >
       <section className="max-h-[90vh] w-full max-w-4xl overflow-auto rounded-lg bg-white p-5 shadow-soft">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <Badge tone={typeTone[resource?.type] ?? "blue"}>
               {resource ? formatType(resource.type) : "Loading"}
             </Badge>
-            <h2 className="mt-3 text-xl font-black text-slateboard">{resource?.title ?? "Loading resource"}</h2>
+            <h2 id="resource-dialog-title" className="mt-3 text-xl font-black text-slateboard">{resource?.title ?? "Loading resource"}</h2>
           </div>
-          <button type="button" className="grid size-10 place-items-center rounded-lg hover:bg-slateboard/5" onClick={onClose}>
+          <button
+            type="button"
+            className="grid size-10 place-items-center rounded-lg hover:bg-slateboard/5"
+            aria-label="Close resource dialog"
+            onClick={onClose}
+          >
             <X size={20} aria-hidden="true" />
           </button>
         </div>
@@ -362,7 +389,10 @@ function ResourceModal({
             </Field>
             <div className="flex flex-wrap justify-end gap-3">
               <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isSaving}>
+                {isSaving && <Loader2 className="animate-spin" size={16} aria-hidden="true" />}
+                Save changes
+              </Button>
             </div>
           </form>
         ) : (
@@ -390,7 +420,7 @@ function IconButton({ label, icon: Icon, danger = false, ...props }) {
         danger
           ? "border-coral/25 text-coral hover:bg-coral/10"
           : "border-slateboard/10 text-slateboard hover:bg-skywash"
-      }`}
+      } disabled:cursor-not-allowed disabled:opacity-50`}
       {...props}
     >
       <Icon size={15} aria-hidden="true" />

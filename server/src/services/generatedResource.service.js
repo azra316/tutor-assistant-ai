@@ -1,5 +1,6 @@
 import { GeneratedResource } from "../models/GeneratedResource.js";
 import { ApiError } from "../utils/ApiError.js";
+import mongoose from "mongoose";
 
 export const resourceTypes = ["worksheet", "quiz", "homework", "lessonPlan", "topicExplanation"];
 
@@ -27,7 +28,11 @@ export async function listUserResources(userId, query = {}) {
   const filter = { userId };
   const search = typeof query.search === "string" ? query.search.trim() : "";
 
-  if (query.type && resourceTypes.includes(query.type)) {
+  if (query.type) {
+    if (!resourceTypes.includes(query.type)) {
+      throw new ApiError(400, "Invalid resource type filter");
+    }
+
     filter.type = query.type;
   }
 
@@ -58,6 +63,8 @@ export async function listUserResources(userId, query = {}) {
 }
 
 export async function getUserResourceById(userId, resourceId) {
+  assertValidResourceId(resourceId);
+
   const resource = await GeneratedResource.findOne({ _id: resourceId, userId }).lean();
 
   if (!resource) {
@@ -68,16 +75,19 @@ export async function getUserResourceById(userId, resourceId) {
 }
 
 export async function updateUserResource(userId, resourceId, payload = {}) {
-  const updates = {};
+  assertValidResourceId(resourceId);
 
-  if (typeof payload.title === "string" && payload.title.trim()) {
-    updates.title = payload.title.trim();
+  const updates = {};
+  const nextTitle = typeof payload.title === "string" ? payload.title.trim() : "";
+
+  if (nextTitle) {
+    updates.title = nextTitle;
   }
 
   if (payload.content && typeof payload.content === "object" && !Array.isArray(payload.content)) {
     updates.content = {
       ...payload.content,
-      title: updates.title ?? payload.content.title,
+      title: nextTitle || payload.content.title,
     };
   }
 
@@ -85,20 +95,35 @@ export async function updateUserResource(userId, resourceId, payload = {}) {
     throw new ApiError(400, "Provide a title or content to update");
   }
 
-  const resource = await GeneratedResource.findOneAndUpdate(
-    { _id: resourceId, userId },
-    { $set: updates },
-    { new: true, runValidators: true },
-  ).lean();
+  const existingResource = await GeneratedResource.findOne({ _id: resourceId, userId });
 
-  if (!resource) {
+  if (!existingResource) {
     throw new ApiError(404, "Resource not found");
   }
 
-  return toResourceDetail(resource);
+  if (updates.title) {
+    existingResource.title = updates.title;
+
+    if (existingResource.content && typeof existingResource.content === "object") {
+      existingResource.content = {
+        ...existingResource.content,
+        title: updates.title,
+      };
+    }
+  }
+
+  if (updates.content) {
+    existingResource.content = updates.content;
+  }
+
+  await existingResource.save();
+
+  return toResourceDetail(existingResource.toObject());
 }
 
 export async function deleteUserResource(userId, resourceId) {
+  assertValidResourceId(resourceId);
+
   const result = await GeneratedResource.deleteOne({ _id: resourceId, userId });
 
   if (result.deletedCount === 0) {
@@ -107,6 +132,8 @@ export async function deleteUserResource(userId, resourceId) {
 }
 
 export async function duplicateUserResource(userId, resourceId) {
+  assertValidResourceId(resourceId);
+
   const resource = await GeneratedResource.findOne({ _id: resourceId, userId }).lean();
 
   if (!resource) {
@@ -202,4 +229,10 @@ function toResourceDetail(resource) {
 
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function assertValidResourceId(resourceId) {
+  if (!mongoose.isValidObjectId(resourceId)) {
+    throw new ApiError(400, "Invalid resource identifier");
+  }
 }

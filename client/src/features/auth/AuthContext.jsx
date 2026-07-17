@@ -47,8 +47,13 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await logoutUser();
-    setUser(null);
+    try {
+      await logoutUser();
+    } catch {
+      // Clear local auth state even if the server is unreachable.
+    } finally {
+      setUser(null);
+    }
   }
 
   const value = useMemo(

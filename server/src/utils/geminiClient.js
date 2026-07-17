@@ -10,6 +10,10 @@ export async function generateGeminiJson({ prompt, schema, responseName, emptyRe
     throw new ApiError(500, "GEMINI_API_KEY is not configured");
   }
 
+  if (!geminiConfig.model) {
+    throw new ApiError(500, "GEMINI_MODEL is not configured");
+  }
+
   const { systemInstruction, contents } = normalizePrompt(prompt);
 
   let response;

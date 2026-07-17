@@ -6,6 +6,7 @@ const generatedResourceSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: [180, "Title must be 180 characters or less"],
     },
     content: {
       type: mongoose.Schema.Types.Mixed,

@@ -9,6 +9,7 @@ export function printResource(resource) {
     throw new Error("Popup blocked. Allow popups to print this resource.");
   }
 
+  printWindow.opener = null;
   printWindow.document.write(`
     <html>
       <head>
@@ -32,7 +33,8 @@ export function printResource(resource) {
 }
 
 export function downloadResourcePdf(resource) {
-  const lines = [`${resource.title}`, `${formatType(resource.type)}`, "", ...stringifyResource(resource).split("\n")];
+  const lines = [`${resource.title}`, `${formatType(resource.type)}`, "", ...stringifyResource(resource).split("\n")]
+    .map(toPdfSafeText);
   const pdf = createSimplePdf(lines);
   const blob = new Blob([pdf], { type: "application/pdf" });
   const link = document.createElement("a");
@@ -95,6 +97,10 @@ function escapeHtml(value) {
 
 function escapePdfText(value) {
   return String(value).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+function toPdfSafeText(value) {
+  return String(value).replace(/[^\x09\x0A\x0D\x20-\x7E]/g, "?");
 }
 
 function slugify(value) {
