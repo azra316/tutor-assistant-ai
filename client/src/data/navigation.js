@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Library,
   NotebookPen,
-  Sparkles,
 } from "lucide-react";
 
 export const pages = [
@@ -74,26 +73,3 @@ export const pages = [
       "Turn complex topics into simple explanations, examples, and analogies.",
   },
 ];
-
-export const generatorPresets = {
-  worksheet: {
-    fields: ["Subject", "Grade level", "Topic", "Difficulty", "Question count"],
-    suggestions: ["Mixed practice", "Word problems", "Answer key", "Challenge section"],
-  },
-  quiz: {
-    fields: ["Subject", "Grade level", "Topic", "Question types", "Time limit"],
-    suggestions: ["Multiple choice", "Short answer", "Rubric", "Standards check"],
-  },
-  homework: {
-    fields: ["Subject", "Grade level", "Topic", "Estimated time", "Support level"],
-    suggestions: ["Parent note", "Worked example", "Reflection prompt", "Answer guide"],
-  },
-  lesson: {
-    fields: ["Subject", "Grade level", "Objective", "Duration", "Class profile"],
-    suggestions: ["Warm-up", "Mini lesson", "Guided practice", "Exit ticket"],
-  },
-  explainer: {
-    fields: ["Topic", "Grade level", "Student level", "Tone", "Examples needed"],
-    suggestions: ["Analogy", "Step-by-step", "Vocabulary list", "Check questions"],
-  },
-};

@@ -7,7 +7,6 @@ import {
   HelpCircle,
   ListChecks,
   Loader2,
-  Printer,
   Server,
   Sparkles,
   TextCursorInput,
@@ -148,7 +147,7 @@ export function QuizGeneratorPage() {
               Build a balanced classroom quiz.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slateboard/65">
-              Generate MCQs, true/false, fill-in-the-blank, and short-answer questions from one structured quiz request.
+              Create MCQs, true/false, fill-in-the-blank, and short-answer questions in one balanced quiz.
             </p>
           </div>
 
@@ -159,10 +158,10 @@ export function QuizGeneratorPage() {
               </div>
               <div>
                 <p className="font-black text-slateboard">
-                  {isGenerated ? "Backend response" : "Preview mode"}
+                  {isGenerated ? "Ready quiz" : "Draft preview"}
                 </p>
                 <p className="text-sm font-semibold text-slateboard/58">
-                  {isGenerated ? "Quiz loaded" : "Ready to generate"}
+                  {isGenerated ? "Quiz ready" : "Ready to create"}
                 </p>
               </div>
             </div>
@@ -245,7 +244,7 @@ export function QuizGeneratorPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="pt-2">
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={17} aria-hidden="true" />
@@ -253,10 +252,6 @@ export function QuizGeneratorPage() {
                   <BadgeCheck size={17} aria-hidden="true" />
                 )}
                 {isLoading ? "Creating" : "Create"}
-              </Button>
-              <Button type="button" variant="secondary">
-                <Printer size={17} aria-hidden="true" />
-                Print
               </Button>
             </div>
           </form>
@@ -283,7 +278,7 @@ export function QuizGeneratorPage() {
               aria-live="polite"
             >
               <Loader2 className="animate-spin text-coral" size={20} aria-hidden="true" />
-              Generating quiz from the backend...
+              Creating your quiz...
             </section>
           )}
 
@@ -296,9 +291,9 @@ export function QuizGeneratorPage() {
             >
               <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
-                <h3 className="font-black text-slateboard">Quiz generated successfully</h3>
+                <h3 className="font-black text-slateboard">Quiz is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
-                  Received response ID <span className="font-bold">{quiz.id}</span>.
+                  Review the quiz below.
                 </p>
               </div>
             </section>
@@ -390,11 +385,11 @@ export function QuizGeneratorPage() {
                     <p className="text-sm text-white/68">
                       {quiz?.answerKey
                         ? "Generated answers with short explanations."
-                        : "Submit the form to load the generated answer key."}
+                        : "Create a quiz to see the answer key here."}
                     </p>
                   </div>
                 </div>
-                <Badge tone="honey">{quiz?.generatedBy ?? "OpenAI"}</Badge>
+                <Badge tone="honey">{quiz ? "Created for your class" : "Ready when you are"}</Badge>
               </div>
 
               {quiz?.answerKey && (

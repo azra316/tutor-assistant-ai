@@ -119,19 +119,39 @@ textarea:focus-visible {
   color: #eef7f5;
 }
 
+.dark .text-meadow {
+  color: #7ee0c6;
+}
+
+.dark .text-coral {
+  color: #ff9d8f;
+}
+
 .dark .text-slateboard\/65,
 .dark .text-slateboard\/60,
 .dark .text-slateboard\/58,
 .dark .text-slateboard\/55,
 .dark .text-slateboard\/50,
-.dark .text-slateboard\/45 {
+.dark .text-slateboard\/45,
+.dark .text-slateboard\/40 {
   color: rgba(238, 247, 245, 0.68);
 }
 
 .dark .border-slateboard\/10,
 .dark .border-slateboard\/15,
-.dark .border-slateboard\/20 {
+.dark .border-slateboard\/20,
+.dark .border-slateboard\/30 {
   border-color: rgba(255, 255, 255, 0.14);
+}
+
+.dark .text-white\/62,
+.dark .text-white\/65,
+.dark .text-white\/68,
+.dark .text-white\/72,
+.dark .text-white\/78,
+.dark .text-white\/80,
+.dark .text-white\/86 {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .dark .shadow-soft {

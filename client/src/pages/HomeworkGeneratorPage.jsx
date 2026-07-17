@@ -6,7 +6,6 @@ import {
   Clock3,
   Loader2,
   NotebookTabs,
-  Printer,
   Server,
   Sparkles,
   Target,
@@ -114,7 +113,7 @@ export function HomeworkGeneratorPage() {
         <div className="grid gap-6 p-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
           <div>
             <div className="mb-4 flex flex-wrap items-center gap-3">
-              <div className="grid size-12 place-items-center rounded-lg bg-honey text-slateboard">
+              <div className="grid size-12 place-items-center rounded-lg bg-honey text-[#12343B]">
                 <BookOpenCheck size={24} aria-hidden="true" />
               </div>
               <Badge tone="honey">Homework studio</Badge>
@@ -123,21 +122,21 @@ export function HomeworkGeneratorPage() {
               Generate thoughtful homework for teachers.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slateboard/65">
-              Select the class, subject, and topic. The AI returns homework tasks, an estimated completion time, and a learning objective.
+              Select the class, subject, and topic. Tutor Assistant creates homework tasks, an estimated completion time, and a learning objective.
             </p>
           </div>
 
           <div className="rounded-lg bg-skywash p-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-lg bg-white text-[#7A4B04]">
+              <div className="grid size-10 place-items-center rounded-lg bg-white text-[#7A4B04] dark:text-honey">
                 <Sparkles size={20} aria-hidden="true" />
               </div>
               <div>
                 <p className="font-black text-slateboard">
-                  {isGenerated ? "Backend response" : "Preview mode"}
+                  {isGenerated ? "Ready homework" : "Draft preview"}
                 </p>
                 <p className="text-sm font-semibold text-slateboard/58">
-                  {isGenerated ? "Homework loaded" : "Ready to generate"}
+                  {isGenerated ? "Homework ready" : "Ready to create"}
                 </p>
               </div>
             </div>
@@ -199,7 +198,7 @@ export function HomeworkGeneratorPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="pt-2">
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={17} aria-hidden="true" />
@@ -207,10 +206,6 @@ export function HomeworkGeneratorPage() {
                   <ClipboardCheck size={17} aria-hidden="true" />
                 )}
                 {isLoading ? "Creating" : "Create"}
-              </Button>
-              <Button type="button" variant="secondary">
-                <Printer size={17} aria-hidden="true" />
-                Print
               </Button>
             </div>
           </form>
@@ -236,8 +231,8 @@ export function HomeworkGeneratorPage() {
               className="flex items-center gap-3 rounded-lg border border-honey/30 bg-honey/20 p-4 text-sm font-semibold text-slateboard"
               aria-live="polite"
             >
-              <Loader2 className="animate-spin text-[#7A4B04]" size={20} aria-hidden="true" />
-              Generating homework from the backend...
+              <Loader2 className="animate-spin text-[#7A4B04] dark:text-honey" size={20} aria-hidden="true" />
+              Creating your homework...
             </section>
           )}
 
@@ -250,9 +245,9 @@ export function HomeworkGeneratorPage() {
             >
               <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
-                <h3 className="font-black text-slateboard">Homework generated successfully</h3>
+                <h3 className="font-black text-slateboard">Homework is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
-                  Received response ID <span className="font-bold">{homework.id}</span>.
+                  Review the homework below.
                 </p>
               </div>
             </section>
@@ -261,7 +256,7 @@ export function HomeworkGeneratorPage() {
           <section className="rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#7A4B04]">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#7A4B04] dark:text-honey">
                   Student homework
                 </p>
                 <h3 className="mt-2 text-2xl font-black text-slateboard">
@@ -296,7 +291,7 @@ export function HomeworkGeneratorPage() {
 
             <Card>
               <div className="mb-3 flex items-center gap-3">
-                <Clock3 className="text-[#7A4B04]" size={20} aria-hidden="true" />
+                <Clock3 className="text-[#7A4B04] dark:text-honey" size={20} aria-hidden="true" />
                 <h3 className="font-black text-slateboard">Estimated completion time</h3>
               </div>
               <p className="text-2xl font-black text-slateboard">
@@ -344,12 +339,12 @@ export function HomeworkGeneratorPage() {
                     <h3 className="font-black">Teacher notes</h3>
                     <p className="text-sm text-white/68">
                       {homework?.teacherNotes
-                        ? "Generated guidance for assigning and reviewing the homework."
-                        : "Submit the form to load teacher notes."}
+                        ? "Helpful guidance for assigning and reviewing the homework."
+                        : "Create homework to see teacher notes here."}
                     </p>
                   </div>
                 </div>
-                <Badge tone="honey">{homework?.generatedBy ?? "OpenAI"}</Badge>
+                <Badge tone="honey">{homework ? "Created for your class" : "Ready when you are"}</Badge>
               </div>
 
               {homework?.teacherNotes && (

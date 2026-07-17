@@ -2,12 +2,26 @@ export function stringifyResource(resource) {
   return JSON.stringify(resource.content ?? resource, null, 2);
 }
 
+export function formatResourceForDisplay(resource) {
+  const content = resource?.content ?? resource ?? {};
+  const lines = [
+    resource?.title ?? content.title,
+    formatType(resource?.type ?? content.type ?? "resource"),
+    "",
+    ...formatValue(content),
+  ].filter((line, index, allLines) => line != null && (line !== "" || allLines[index - 1] !== ""));
+
+  return lines.join("\n").trim();
+}
+
 export function printResource(resource) {
   const printWindow = window.open("", "_blank");
 
   if (!printWindow) {
-    throw new Error("Popup blocked. Allow popups to print this resource.");
+    throw new Error("Your browser blocked the print window. Please allow pop-ups and try again.");
   }
+
+  const printableText = formatResourceForDisplay(resource);
 
   printWindow.opener = null;
   printWindow.document.write(`
@@ -17,13 +31,13 @@ export function printResource(resource) {
         <style>
           body { font-family: Arial, sans-serif; margin: 32px; color: #17313B; }
           h1 { margin-bottom: 8px; }
-          pre { white-space: pre-wrap; line-height: 1.5; background: #F6F8F7; padding: 16px; border-radius: 8px; }
+          pre { white-space: pre-wrap; line-height: 1.5; background: #F6F8F7; padding: 16px; border-radius: 8px; font-family: Arial, sans-serif; }
         </style>
       </head>
       <body>
         <h1>${escapeHtml(resource.title)}</h1>
-        <p>${escapeHtml(resource.type)}</p>
-        <pre>${escapeHtml(stringifyResource(resource))}</pre>
+        <p>${escapeHtml(formatType(resource.type))}</p>
+        <pre>${escapeHtml(printableText)}</pre>
       </body>
     </html>
   `);
@@ -33,7 +47,7 @@ export function printResource(resource) {
 }
 
 export function downloadResourcePdf(resource) {
-  const lines = [`${resource.title}`, `${formatType(resource.type)}`, "", ...stringifyResource(resource).split("\n")]
+  const lines = formatResourceForDisplay(resource).split("\n")
     .map(toPdfSafeText);
   const pdf = createSimplePdf(lines);
   const blob = new Blob([pdf], { type: "application/pdf" });
@@ -108,5 +122,72 @@ function slugify(value) {
 }
 
 function formatType(type) {
-  return type.replace(/([A-Z])/g, " $1").replace(/^./, (char) => char.toUpperCase());
+  const labels = {
+    worksheet: "Worksheet",
+    quiz: "Quiz",
+    homework: "Homework",
+    lessonPlan: "Lesson Plan",
+    topicExplanation: "Topic Explanation",
+  };
+
+  return (labels[type] ?? String(type).replace(/([A-Z])/g, " $1")).replace(/^./, (char) => char.toUpperCase());
+}
+
+function formatValue(value, label = "") {
+  if (value == null || value === "") return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) => {
+      const heading = label ? `${label} ${index + 1}` : `${index + 1}.`;
+      if (typeof item === "object" && item !== null) {
+        return [heading, ...formatValue(item).map((line) => `  ${line}`), ""];
+      }
+
+      return [`${index + 1}. ${String(item)}`];
+    });
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value)
+      .filter(([key]) => !["id", "_id", "__v", "createdAt", "updatedAt", "userId", "generatedBy"].includes(key))
+      .flatMap(([key, nestedValue]) => {
+        const friendlyLabel = formatLabel(key);
+        const nestedLines = formatValue(nestedValue, friendlyLabel);
+
+        if (nestedLines.length === 0) return [];
+        if (typeof nestedValue === "object" && nestedValue !== null) {
+          return [friendlyLabel, ...nestedLines.map((line) => `  ${line}`), ""];
+        }
+
+        return [`${friendlyLabel}: ${nestedLines.join(" ")}`];
+      });
+  }
+
+  return [String(value)];
+}
+
+function formatLabel(value) {
+  const labels = {
+    answerKey: "Answer Key",
+    class: "Class",
+    difficulty: "Difficulty",
+    estimatedCompletionTime: "Estimated Completion Time",
+    funFact: "Fun Fact",
+    learningObjective: "Learning Objective",
+    numberOfQuestions: "Number of Questions",
+    realLifeExample: "Real-Life Example",
+    revisionPoints: "Revision Points",
+    simpleExplanation: "Simple Explanation",
+    studentInstructions: "Student Instructions",
+    successCriteria: "Success Criteria",
+    teacherAction: "Teacher",
+    teacherName: "Teacher",
+    teacherNotes: "Teacher Notes",
+    teachingSteps: "Teaching Steps",
+  };
+
+  return labels[value] ?? String(value)
+    .replace(/([A-Z])/g, " $1")
+    .replace(/_/g, " ")
+    .replace(/^./, (char) => char.toUpperCase());
 }

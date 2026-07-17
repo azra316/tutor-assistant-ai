@@ -7,7 +7,6 @@ import {
   Server,
   FileText,
   Layers3,
-  Printer,
   Sparkles,
   TriangleAlert,
 } from "lucide-react";
@@ -129,7 +128,7 @@ export function WorksheetGeneratorPage() {
               Build a polished classroom worksheet.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slateboard/65">
-              Choose the class, subject, topic, difficulty, and number of questions. The page sends the request to the Express backend and renders the generated response.
+              Choose the class, subject, topic, difficulty, and number of questions. Tutor Assistant will prepare a ready-to-use worksheet.
             </p>
           </div>
 
@@ -140,10 +139,10 @@ export function WorksheetGeneratorPage() {
               </div>
               <div>
                 <p className="font-black text-slateboard">
-                  {isGenerated ? "Backend response" : "Preview mode"}
+                  {isGenerated ? "Ready worksheet" : "Draft preview"}
                 </p>
                 <p className="text-sm font-semibold text-slateboard/58">
-                  {isGenerated ? "Worksheet loaded" : "Ready to generate"}
+                  {isGenerated ? "Worksheet ready" : "Ready to create"}
                 </p>
               </div>
             </div>
@@ -226,7 +225,7 @@ export function WorksheetGeneratorPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="pt-2">
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={17} aria-hidden="true" />
@@ -234,10 +233,6 @@ export function WorksheetGeneratorPage() {
                   <ClipboardCheck size={17} aria-hidden="true" />
                 )}
                 {isLoading ? "Creating" : "Create"}
-              </Button>
-              <Button type="button" variant="secondary">
-                <Printer size={17} aria-hidden="true" />
-                Print
               </Button>
             </div>
           </form>
@@ -264,7 +259,7 @@ export function WorksheetGeneratorPage() {
               aria-live="polite"
             >
               <Loader2 className="animate-spin text-meadow" size={20} aria-hidden="true" />
-              Generating worksheet from the backend...
+              Creating your worksheet...
             </section>
           )}
 
@@ -277,9 +272,9 @@ export function WorksheetGeneratorPage() {
             >
               <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
-                <h3 className="font-black text-slateboard">Worksheet generated successfully</h3>
+                <h3 className="font-black text-slateboard">Worksheet is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
-                  Received response ID <span className="font-bold">{worksheet.id}</span>.
+                  Review the worksheet below.
                 </p>
               </div>
             </section>
@@ -362,7 +357,7 @@ export function WorksheetGeneratorPage() {
                 </div>
                 <div>
                   <h3 className="font-black">
-                    {worksheet?.answerKey ? "Answer key" : "Answer key placeholder"}
+                    Answer key
                   </h3>
                   {worksheet?.answerKey ? (
                     <div className="mt-2 flex flex-wrap gap-2 text-sm text-white/80">
@@ -374,12 +369,12 @@ export function WorksheetGeneratorPage() {
                     </div>
                   ) : (
                     <p className="text-sm text-white/68">
-                      Submit the form to load the generated answer key from the backend.
+                      Create a worksheet to see the answer key here.
                     </p>
                   )}
                 </div>
               </div>
-              <Badge tone="honey">{worksheet?.generatedBy ?? "OpenAI"}</Badge>
+              <Badge tone="honey">{worksheet ? "Created for your class" : "Ready when you are"}</Badge>
             </div>
           </Card>
         </div>

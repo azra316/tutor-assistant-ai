@@ -3,11 +3,11 @@ import { requestJson } from "../apiClient";
 export async function fetchResources(params) {
   const query = new URLSearchParams(params);
   const result = await requestJson(`/api/resources?${query.toString()}`, {}, {
-    fallbackMessage: "Unable to load resources.",
+    fallbackMessage: "We could not load your saved resources. Please try again.",
   });
 
   if (!result?.success || !result?.data) {
-    throw new Error("The resources response was not in the expected format.");
+    throw new Error("We could not load your saved resources. Please try again.");
   }
 
   return result.data;
@@ -15,11 +15,11 @@ export async function fetchResources(params) {
 
 export async function fetchResource(id) {
   const result = await requestJson(`/api/resources/${id}`, {}, {
-    fallbackMessage: "Unable to load resource.",
+    fallbackMessage: "We could not open this resource. Please try again.",
   });
 
   if (!result?.success || !result?.data) {
-    throw new Error("The resource response was not in the expected format.");
+    throw new Error("We could not open this resource. Please try again.");
   }
 
   return result.data;
@@ -33,11 +33,11 @@ export async function updateResource(id, payload) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     },
-    { fallbackMessage: "Unable to update resource." },
+    { fallbackMessage: "We could not save your changes. Please try again." },
   );
 
   if (!result?.success || !result?.data) {
-    throw new Error("The updated resource response was not in the expected format.");
+    throw new Error("We could not save your changes. Please try again.");
   }
 
   return result.data;
@@ -47,7 +47,7 @@ export async function deleteResource(id) {
   await requestJson(
     `/api/resources/${id}`,
     { method: "DELETE" },
-    { fallbackMessage: "Unable to delete resource." },
+    { fallbackMessage: "We could not delete this resource. Please try again." },
   );
 }
 
@@ -55,11 +55,11 @@ export async function duplicateResource(id) {
   const result = await requestJson(
     `/api/resources/${id}/duplicate`,
     { method: "POST" },
-    { fallbackMessage: "Unable to duplicate resource." },
+    { fallbackMessage: "We could not duplicate this resource. Please try again." },
   );
 
   if (!result?.success || !result?.data) {
-    throw new Error("The duplicated resource response was not in the expected format.");
+    throw new Error("We could not duplicate this resource. Please try again.");
   }
 
   return result.data;

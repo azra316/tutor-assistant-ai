@@ -7,7 +7,6 @@ import {
   Layers3,
   ListChecks,
   Loader2,
-  Printer,
   Route,
   Server,
   Sparkles,
@@ -152,7 +151,7 @@ export function LessonPlannerPage() {
               Generate a complete lesson plan.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slateboard/65">
-              Enter the topic, class, and duration. The AI returns objectives, activities, teaching steps, and assessment.
+              Enter the topic, class, and duration. Tutor Assistant creates objectives, activities, teaching steps, and assessment.
             </p>
           </div>
 
@@ -163,10 +162,10 @@ export function LessonPlannerPage() {
               </div>
               <div>
                 <p className="font-black text-slateboard">
-                  {isGenerated ? "Backend response" : "Preview mode"}
+                  {isGenerated ? "Ready lesson plan" : "Draft preview"}
                 </p>
                 <p className="text-sm font-semibold text-slateboard/58">
-                  {isGenerated ? "Lesson plan loaded" : "Ready to generate"}
+                  {isGenerated ? "Lesson plan ready" : "Ready to create"}
                 </p>
               </div>
             </div>
@@ -193,7 +192,7 @@ export function LessonPlannerPage() {
           <div className="mb-5">
             <h3 className="text-lg font-black text-slateboard">Lesson inputs</h3>
             <p className="text-sm text-slateboard/60">
-              Keep the request focused so the plan fits the class period.
+              Keep the topic focused so the plan fits the class period.
             </p>
           </div>
 
@@ -222,7 +221,7 @@ export function LessonPlannerPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="pt-2">
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={17} aria-hidden="true" />
@@ -230,10 +229,6 @@ export function LessonPlannerPage() {
                   <ClipboardCheck size={17} aria-hidden="true" />
                 )}
                 {isLoading ? "Creating" : "Create"}
-              </Button>
-              <Button type="button" variant="secondary">
-                <Printer size={17} aria-hidden="true" />
-                Print
               </Button>
             </div>
           </form>
@@ -260,7 +255,7 @@ export function LessonPlannerPage() {
               aria-live="polite"
             >
               <Loader2 className="animate-spin text-slateboard" size={20} aria-hidden="true" />
-              Generating lesson plan from the backend...
+              Creating your lesson plan...
             </section>
           )}
 
@@ -273,9 +268,9 @@ export function LessonPlannerPage() {
             >
               <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
-                <h3 className="font-black text-slateboard">Lesson plan generated successfully</h3>
+                <h3 className="font-black text-slateboard">Lesson plan is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
-                  Received response ID <span className="font-bold">{lessonPlan.id}</span>.
+                  Review the lesson plan below.
                 </p>
               </div>
             </section>
@@ -322,7 +317,7 @@ export function LessonPlannerPage() {
 
             <Card>
               <div className="mb-3 flex items-center gap-3">
-                <Clock3 className="text-[#7A4B04]" size={20} aria-hidden="true" />
+                <Clock3 className="text-[#7A4B04] dark:text-honey" size={20} aria-hidden="true" />
                 <h3 className="font-black text-slateboard">Activities</h3>
               </div>
               <div className="grid gap-3">
@@ -381,7 +376,7 @@ export function LessonPlannerPage() {
                     <p className="text-sm text-white/68">{assessment.method}</p>
                   </div>
                 </div>
-                <Badge tone="honey">{lessonPlan?.generatedBy ?? "OpenAI"}</Badge>
+                <Badge tone="honey">{lessonPlan ? "Created for your class" : "Ready when you are"}</Badge>
               </div>
 
               <div className="grid gap-3 md:grid-cols-2">

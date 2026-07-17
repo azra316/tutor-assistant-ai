@@ -21,7 +21,7 @@ export async function postJson(path, payload, options = {}) {
   );
 
   if (!result?.success || !result?.data) {
-    throw new Error(invalidFormatMessage);
+    throw new Error(toTeacherMessage(invalidFormatMessage));
   }
 
   return result.data;
@@ -40,17 +40,15 @@ export async function requestJson(path, fetchOptions = {}, options = {}) {
       },
     });
   } catch {
-    throw new Error(
-      `Could not connect to the API at ${API_BASE_URL}. Make sure the backend is running and VITE_API_BASE_URL points to the deployed API URL.`,
-    );
+    throw new Error("We could not reach Tutor Assistant right now. Please check your connection and try again.");
   }
 
   const result = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message = result?.message ?? options.fallbackMessage ?? "Request failed.";
+    const message = result?.message ?? options.fallbackMessage ?? "Something went wrong. Please try again.";
     const details = Array.isArray(result?.errors) ? result.errors : [];
-    throw new Error(details.length > 0 ? `${message}: ${details.join(", ")}` : message);
+    throw new Error(toTeacherMessage(details.length > 0 ? `${message}: ${details.join(", ")}` : message));
   }
 
   return result;
@@ -58,9 +56,7 @@ export async function requestJson(path, fetchOptions = {}, options = {}) {
 
 function buildApiUrl(path) {
   if (!API_BASE_URL) {
-    throw new Error(
-      "API URL is not configured. Set VITE_API_BASE_URL to your backend URL before building the frontend.",
-    );
+    throw new Error("Tutor Assistant needs a quick setup update. Please contact support if this keeps happening.");
   }
 
   return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
@@ -68,4 +64,31 @@ function buildApiUrl(path) {
 
 function normalizeApiBaseUrl(value) {
   return value ? value.replace(/\/+$/, "") : "";
+}
+
+function toTeacherMessage(message) {
+  const text = String(message || "");
+  const technicalTerms = [
+    "api",
+    "backend",
+    "server",
+    "mongodb",
+    "database",
+    "json",
+    "vite",
+    "gemini",
+    "openai",
+    "model",
+    "expected format",
+    "configured",
+    "internal",
+    "stack",
+    "resource identifier",
+  ];
+
+  if (technicalTerms.some((term) => text.toLowerCase().includes(term))) {
+    return "Tutor Assistant had trouble preparing this. Please try again in a moment.";
+  }
+
+  return text || "Something went wrong. Please try again.";
 }

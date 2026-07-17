@@ -166,7 +166,7 @@ function AuthLayout({ title, subtitle, children }) {
       <section className="grid place-items-center">
         <Card className="w-full max-w-md">
           <div className="mb-6">
-            <Badge tone="blue">Authentication</Badge>
+            <Badge tone="blue">Teacher account</Badge>
             <h2 className="mt-4 text-2xl font-black text-slateboard">{title}</h2>
             <p className="mt-2 text-sm leading-6 text-slateboard/60">{subtitle}</p>
           </div>

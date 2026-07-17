@@ -12,7 +12,7 @@ export function Badge({ children, tone = "green" }) {
   const tones = {
     green: "bg-meadow/10 text-meadow",
     coral: "bg-coral/10 text-coral",
-    honey: "bg-honey/20 text-[#7A4B04]",
+    honey: "bg-honey/20 text-[#7A4B04] dark:text-honey",
     blue: "bg-skywash text-slateboard dark:bg-white/10 dark:text-white",
   };
 

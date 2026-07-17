@@ -2,7 +2,7 @@ import { postJson } from "../apiClient";
 
 export async function generateLessonPlan(payload) {
   return postJson("/generate-lesson-plan", payload, {
-    fallbackMessage: "Unable to generate lesson plan.",
-    invalidFormatMessage: "The lesson plan response was not in the expected format.",
+    fallbackMessage: "We could not create the lesson plan. Please try again.",
+    invalidFormatMessage: "The lesson plan was created, but we could not display it correctly. Please try again.",
   });
 }

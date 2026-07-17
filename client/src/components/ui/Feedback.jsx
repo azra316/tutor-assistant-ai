@@ -122,7 +122,7 @@ export function EmptyState({
 export function ErrorPage({
   statusCode = "500",
   title = "Something went wrong",
-  description = "The page could not be loaded. Try returning to the dashboard.",
+  description = "We could not open this page. Try returning to the dashboard.",
   onReset,
 }) {
   return (
@@ -173,7 +173,7 @@ export class ErrorBoundary extends Component {
         <ErrorPage
           statusCode="500"
           title="Something went wrong"
-          description="A UI error interrupted this page. Return to the dashboard and try again."
+          description="Something interrupted this page. Return to the dashboard and try again."
           onReset={() => {
             this.setState({ hasError: false });
             this.props.onReset?.();

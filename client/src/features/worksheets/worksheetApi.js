@@ -2,7 +2,7 @@ import { postJson } from "../apiClient";
 
 export async function generateWorksheet(payload) {
   return postJson("/generate-worksheet", payload, {
-    fallbackMessage: "Unable to generate worksheet.",
-    invalidFormatMessage: "The worksheet response was not in the expected format.",
+    fallbackMessage: "We could not create the worksheet. Please try again.",
+    invalidFormatMessage: "The worksheet was created, but we could not display it correctly. Please try again.",
   });
 }

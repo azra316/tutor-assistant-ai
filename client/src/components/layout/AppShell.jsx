@@ -1,4 +1,4 @@
-import { Bell, LogOut, Menu, Moon, Search, Sparkles, Sun, UserRound } from "lucide-react";
+import { LogOut, Menu, Moon, Sun, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 import { pages } from "../../data/navigation";
 import { useTheme } from "../../features/theme/ThemeContext";
@@ -55,34 +55,12 @@ export function AppShell({ activePage, onNavigate, children, user, onLogout }) {
               </h1>
             </div>
 
-            <div className="hidden h-11 min-w-72 items-center gap-2 rounded-lg border border-slateboard/10 bg-white px-3 text-sm text-slateboard/55 shadow-sm md:flex">
-              <Search size={18} aria-hidden="true" />
-              <span>Search resources, topics, classes</span>
-            </div>
-
-            <button
-              className="hidden min-h-11 items-center gap-2 rounded-lg bg-slateboard px-4 text-sm font-bold text-white shadow-soft transition hover:bg-[#0D2930] sm:inline-flex"
-              type="button"
-              onClick={() => navigate("worksheet")}
-            >
-              <Sparkles size={17} aria-hidden="true" />
-              New resource
-            </button>
-
             {user && (
               <div className="hidden min-h-11 items-center gap-2 rounded-lg border border-slateboard/10 bg-white px-3 text-sm font-bold text-slateboard shadow-sm sm:flex">
                 <UserRound size={18} aria-hidden="true" />
                 <span className="max-w-36 truncate">{user.fullName}</span>
               </div>
             )}
-
-            <button
-              className="grid size-11 place-items-center rounded-lg border border-slateboard/10 bg-white text-slateboard shadow-sm"
-              type="button"
-              aria-label="Notifications"
-            >
-              <Bell size={19} />
-            </button>
 
             <button
               className="grid size-11 place-items-center rounded-lg border border-slateboard/10 bg-white text-slateboard shadow-sm transition hover:bg-skywash"

@@ -6,7 +6,6 @@ import {
   HelpCircle,
   Lightbulb,
   Loader2,
-  Printer,
   Rocket,
   Server,
   Sparkles,
@@ -108,7 +107,7 @@ export function TopicExplainerPage() {
               Explain any topic for the selected grade.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slateboard/65">
-              Enter a topic and class. The AI returns a simple explanation, real-life example, fun fact, and revision points.
+              Enter a topic and class. Tutor Assistant creates a simple explanation, real-life example, fun fact, and revision points.
             </p>
           </div>
 
@@ -119,10 +118,10 @@ export function TopicExplainerPage() {
               </div>
               <div>
                 <p className="font-black text-slateboard">
-                  {isGenerated ? "Backend response" : "Preview mode"}
+                  {isGenerated ? "Ready explanation" : "Draft preview"}
                 </p>
                 <p className="text-sm font-semibold text-slateboard/58">
-                  {isGenerated ? "Explanation loaded" : "Ready to generate"}
+                  {isGenerated ? "Explanation ready" : "Ready to create"}
                 </p>
               </div>
             </div>
@@ -176,7 +175,7 @@ export function TopicExplainerPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="pt-2">
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={17} aria-hidden="true" />
@@ -184,10 +183,6 @@ export function TopicExplainerPage() {
                   <ClipboardCheck size={17} aria-hidden="true" />
                 )}
                 {isLoading ? "Creating" : "Create"}
-              </Button>
-              <Button type="button" variant="secondary">
-                <Printer size={17} aria-hidden="true" />
-                Print
               </Button>
             </div>
           </form>
@@ -214,7 +209,7 @@ export function TopicExplainerPage() {
               aria-live="polite"
             >
               <Loader2 className="animate-spin text-[#4E6E81]" size={20} aria-hidden="true" />
-              Generating explanation from the backend...
+              Creating your explanation...
             </section>
           )}
 
@@ -227,9 +222,9 @@ export function TopicExplainerPage() {
             >
               <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
-                <h3 className="font-black text-slateboard">Topic explained successfully</h3>
+                <h3 className="font-black text-slateboard">Explanation is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
-                  Received response ID <span className="font-bold">{explanation.id}</span>.
+                  Review the explanation below.
                 </p>
               </div>
             </section>
@@ -282,7 +277,7 @@ export function TopicExplainerPage() {
 
           <Card className="bg-skywash">
             <div className="flex items-start gap-3">
-              <div className="grid size-11 shrink-0 place-items-center rounded-lg bg-white text-[#7A4B04]">
+              <div className="grid size-11 shrink-0 place-items-center rounded-lg bg-white text-[#7A4B04] dark:text-honey">
                 <Lightbulb size={22} aria-hidden="true" />
               </div>
               <div>
@@ -308,7 +303,7 @@ export function TopicExplainerPage() {
                     </p>
                   </div>
                 </div>
-                <Badge tone="honey">{displayedExplanation.generatedBy ?? "OpenAI"}</Badge>
+                <Badge tone="honey">{explanation ? "Created for your class" : "Ready when you are"}</Badge>
               </div>
 
               <div className="grid gap-2 md:grid-cols-2">

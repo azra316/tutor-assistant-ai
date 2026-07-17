@@ -34,7 +34,7 @@ const statCards = [
     key: "totalHomework",
     label: "Total Homework",
     icon: BookOpenCheck,
-    tone: "bg-honey text-slateboard",
+    tone: "bg-honey text-[#12343B]",
   },
   {
     key: "totalLessonPlans",
@@ -93,13 +93,13 @@ export function Dashboard({ onNavigate }) {
           <div>
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-sm font-bold text-white/86">
               <Sparkles size={16} aria-hidden="true" />
-              Live teacher dashboard
+              Teacher dashboard
             </div>
             <h2 className="max-w-3xl text-3xl font-black leading-tight sm:text-4xl">
               Welcome back, {user?.fullName ?? "Teacher"}.
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-7 text-white/72">
-              Your dashboard now shows real MongoDB counts for resources generated from your account only.
+              See the teaching materials you have created and quickly start your next classroom resource.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button onClick={() => onNavigate("worksheet")}>Start worksheet</Button>
@@ -128,7 +128,7 @@ export function Dashboard({ onNavigate }) {
         >
           <TriangleAlert className="mt-0.5 shrink-0 text-coral" size={20} aria-hidden="true" />
           <div className="min-w-0 flex-1">
-            <h3 className="font-black text-coral">Could not load dashboard statistics</h3>
+            <h3 className="font-black text-coral">Could not load dashboard summary</h3>
             <p className="mt-1 leading-6">{error}</p>
           </div>
           <Button type="button" variant="secondary" onClick={loadStats}>

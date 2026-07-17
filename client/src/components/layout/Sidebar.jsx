@@ -18,7 +18,7 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
       >
         <div className="flex min-h-20 items-center justify-between px-5">
           <div className="flex items-center gap-3">
-            <div className="grid size-11 place-items-center rounded-lg bg-honey text-slateboard">
+            <div className="grid size-11 place-items-center rounded-lg bg-honey text-[#12343B]">
               <BookMarked size={24} aria-hidden="true" />
             </div>
             <div>
@@ -47,7 +47,7 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
                 onClick={() => onNavigate(page.id)}
                 className={`flex min-h-12 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-bold transition duration-200 hover:translate-x-0.5 ${
                   isActive
-                    ? "bg-white text-slateboard shadow-soft"
+                ? "bg-white text-slateboard shadow-soft dark:bg-white/15 dark:text-white"
                     : "text-white/78 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-current={isActive ? "page" : undefined}
@@ -62,7 +62,7 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
         {user && (
           <div className="mx-4 rounded-lg bg-white/10 p-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-lg bg-white text-slateboard">
+              <div className="grid size-10 place-items-center rounded-lg bg-white text-slateboard dark:bg-white/15 dark:text-white">
                 <UserRound size={19} aria-hidden="true" />
               </div>
               <div className="min-w-0">

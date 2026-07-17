@@ -23,7 +23,11 @@ import {
   fetchResources,
   updateResource,
 } from "../features/resources/resourcesApi";
-import { downloadResourcePdf, printResource, stringifyResource } from "../utils/resourceExport";
+import {
+  downloadResourcePdf,
+  formatResourceForDisplay,
+  printResource,
+} from "../utils/resourceExport";
 
 const typeOptions = [
   { value: "", label: "All resources" },
@@ -57,7 +61,7 @@ export function MyResourcesPage() {
   const [selectedResource, setSelectedResource] = useState(null);
   const [editingResource, setEditingResource] = useState(null);
   const [editTitle, setEditTitle] = useState("");
-  const [editContent, setEditContent] = useState("");
+  const [editContent, setEditContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [activeAction, setActiveAction] = useState("");
@@ -106,10 +110,10 @@ export function MyResourcesPage() {
       if (mode === "edit") {
         setEditingResource(detail);
         setEditTitle(detail.title);
-        setEditContent(stringifyResource(detail));
+        setEditContent(detail.content ?? {});
       }
     } catch (requestError) {
-      showToast({ title: "Resource failed", description: requestError.message, tone: "error" });
+      showToast({ title: "Could not open resource", description: requestError.message, tone: "error" });
     } finally {
       setIsDetailLoading(false);
     }
@@ -120,10 +124,9 @@ export function MyResourcesPage() {
     setActiveAction("save");
 
     try {
-      const parsedContent = JSON.parse(editContent);
       const updated = await updateResource(editingResource.id, {
         title: editTitle,
-        content: parsedContent,
+        content: editContent ?? {},
       });
       setSelectedResource(updated);
       setEditingResource(null);
@@ -131,8 +134,8 @@ export function MyResourcesPage() {
       showToast({ title: "Resource updated", description: `${updated.title} was saved.` });
     } catch (saveError) {
       showToast({
-        title: "Update failed",
-        description: saveError instanceof SyntaxError ? "Content JSON is invalid." : saveError.message,
+        title: "Could not save changes",
+        description: saveError.message,
         tone: "error",
       });
     } finally {
@@ -150,7 +153,7 @@ export function MyResourcesPage() {
       await loadResources(filters);
       showToast({ title: "Resource deleted", description: `${resource.title} was removed.` });
     } catch (requestError) {
-      showToast({ title: "Delete failed", description: requestError.message, tone: "error" });
+      showToast({ title: "Could not delete resource", description: requestError.message, tone: "error" });
     } finally {
       setActiveAction("");
     }
@@ -164,7 +167,7 @@ export function MyResourcesPage() {
       await loadResources({ ...filters, page: 1 });
       showToast({ title: "Resource duplicated", description: `${duplicated.title} was created.` });
     } catch (requestError) {
-      showToast({ title: "Duplicate failed", description: requestError.message, tone: "error" });
+      showToast({ title: "Could not duplicate resource", description: requestError.message, tone: "error" });
     } finally {
       setActiveAction("");
     }
@@ -175,7 +178,7 @@ export function MyResourcesPage() {
       const detail = resource.content ? resource : await fetchResource(resource.id);
       action(detail);
     } catch (requestError) {
-      showToast({ title: "Action failed", description: requestError.message, tone: "error" });
+      showToast({ title: "Could not complete action", description: requestError.message, tone: "error" });
     }
   }
 
@@ -187,7 +190,7 @@ export function MyResourcesPage() {
             <Badge tone="blue">My Resources</Badge>
             <h2 className="mt-3 text-2xl font-black text-slateboard">Saved teaching resources</h2>
             <p className="mt-2 text-sm leading-6 text-slateboard/65">
-              View, edit, delete, duplicate, print, and export resources saved from your account.
+              View, edit, delete, duplicate, print, and download the classroom materials you have created.
             </p>
           </div>
 
@@ -251,7 +254,7 @@ export function MyResourcesPage() {
         <EmptyState
           icon={FileText}
           title="No resources found"
-          description="Generated resources saved to MongoDB will appear here for the logged-in teacher."
+          description="Your saved teaching materials will appear here after you create them."
         />
       ) : (
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -313,7 +316,7 @@ export function MyResourcesPage() {
           onEdit={() => {
             setEditingResource(selectedResource);
             setEditTitle(selectedResource.title);
-            setEditContent(stringifyResource(selectedResource));
+            setEditContent(selectedResource.content ?? {});
           }}
           onClose={() => {
             setSelectedResource(null);
@@ -355,9 +358,9 @@ function ResourceModal({
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <Badge tone={typeTone[resource?.type] ?? "blue"}>
-              {resource ? formatType(resource.type) : "Loading"}
+              {resource ? formatType(resource.type) : "Opening"}
             </Badge>
-            <h2 id="resource-dialog-title" className="mt-3 text-xl font-black text-slateboard">{resource?.title ?? "Loading resource"}</h2>
+            <h2 id="resource-dialog-title" className="mt-3 text-xl font-black text-slateboard">{resource?.title ?? "Opening resource"}</h2>
           </div>
           <button
             type="button"
@@ -372,20 +375,18 @@ function ResourceModal({
         {isLoading ? (
           <div className="flex items-center gap-3 rounded-lg bg-skywash p-4 font-bold text-slateboard">
             <Loader2 className="animate-spin" size={20} aria-hidden="true" />
-            Loading resource...
+            Opening resource...
           </div>
         ) : editingResource ? (
           <form className="grid gap-4" onSubmit={onSave}>
             <Field label="Title">
               <TextInput value={editTitle} onChange={(event) => setEditTitle(event.target.value)} />
             </Field>
-            <Field label="Content JSON">
-              <TextInput
-                as="textarea"
-                className="min-h-80 font-mono"
-                value={editContent}
-                onChange={(event) => setEditContent(event.target.value)}
-              />
+            <Field label="Resource details">
+              <EditableResourceContent value={editContent ?? {}} onChange={setEditContent} />
+              <p className="mt-2 text-xs font-semibold text-slateboard/55">
+                Update the wording you want to change, then save.
+              </p>
             </Field>
             <div className="flex flex-wrap justify-end gap-3">
               <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
@@ -402,12 +403,107 @@ function ResourceModal({
               <Button type="button" variant="secondary" onClick={onPrint}><Printer size={16} />Print</Button>
               <Button type="button" variant="secondary" onClick={onPdf}><Download size={16} />Download PDF</Button>
             </div>
-            <pre className="max-h-[56vh] overflow-auto rounded-lg bg-chalk p-4 text-sm leading-6 text-slateboard">
-              {stringifyResource(resource)}
-            </pre>
+            <ResourceContentPreview resource={resource} />
           </>
         )}
       </section>
+    </div>
+  );
+}
+
+function EditableResourceContent({ value, onChange }) {
+  return (
+    <div className="grid max-h-[50vh] gap-3 overflow-auto rounded-lg border border-slateboard/10 bg-chalk p-3">
+      {renderEditableFields(value, [], onChange)}
+    </div>
+  );
+}
+
+function renderEditableFields(value, path, onChange) {
+  if (Array.isArray(value)) {
+    return value.map((item, index) => (
+      <div key={[...path, index].join(".")} className="grid gap-2 rounded-lg bg-white p-3">
+        <p className="text-xs font-black uppercase tracking-[0.12em] text-slateboard/45">
+          Item {index + 1}
+        </p>
+        {renderEditableFields(item, [...path, index], onChange)}
+      </div>
+    ));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.entries(value)
+      .filter(([key]) => !["id", "_id", "__v", "createdAt", "updatedAt", "userId", "generatedBy"].includes(key))
+      .map(([key, nestedValue]) => (
+        <div key={[...path, key].join(".")} className="grid gap-2">
+          <span className="text-sm font-black text-slateboard">{formatFieldLabel(key)}</span>
+          {nestedValue && typeof nestedValue === "object" ? (
+            <div className="grid gap-3 rounded-lg border border-slateboard/10 bg-white p-3 dark:bg-[#17313B]">
+              {renderEditableFields(nestedValue, [...path, key], onChange)}
+            </div>
+          ) : (
+            <TextInput
+              as={String(nestedValue ?? "").length > 80 ? "textarea" : "input"}
+              value={nestedValue ?? ""}
+              onChange={(event) => onChange((current) => setAtPath(current, [...path, key], event.target.value))}
+            />
+          )}
+        </div>
+      ));
+  }
+
+  return (
+    <TextInput
+      as={String(value ?? "").length > 80 ? "textarea" : "input"}
+      value={value ?? ""}
+      onChange={(event) => onChange(event.target.value)}
+    />
+  );
+}
+
+function setAtPath(source, path, nextValue) {
+  if (path.length === 0) return nextValue;
+
+  const [key, ...rest] = path;
+  const clone = Array.isArray(source) ? [...source] : { ...(source ?? {}) };
+  clone[key] = rest.length === 0 ? nextValue : setAtPath(clone[key], rest, nextValue);
+  return clone;
+}
+
+function formatFieldLabel(value) {
+  const labels = {
+    answerKey: "Answer Key",
+    class: "Class",
+    difficulty: "Difficulty",
+    estimatedCompletionTime: "Estimated Completion Time",
+    funFact: "Fun Fact",
+    learningObjective: "Learning Objective",
+    numberOfQuestions: "Number of Questions",
+    realLifeExample: "Real-Life Example",
+    revisionPoints: "Revision Points",
+    simpleExplanation: "Simple Explanation",
+    studentInstructions: "Student Instructions",
+    successCriteria: "Success Criteria",
+    teacherAction: "Teacher",
+    teacherName: "Teacher",
+    teacherNotes: "Teacher Notes",
+    teachingSteps: "Teaching Steps",
+  };
+
+  return labels[value] ?? String(value)
+    .replace(/([A-Z])/g, " $1")
+    .replace(/_/g, " ")
+    .replace(/^./, (char) => char.toUpperCase());
+}
+
+function ResourceContentPreview({ resource }) {
+  return (
+    <div className="max-h-[56vh] overflow-auto rounded-lg bg-chalk p-4 text-sm leading-6 text-slateboard">
+      {formatResourceForDisplay(resource)
+        .split("\n")
+        .map((line, index) => (
+          <p key={`${line}-${index}`} className={line ? "" : "h-3"}>{line}</p>
+        ))}
     </div>
   );
 }

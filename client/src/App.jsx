@@ -4,7 +4,6 @@ import { ErrorBoundary, ErrorPage } from "./components/ui/Feedback";
 import { pages } from "./data/navigation";
 import { useAuth } from "./features/auth/AuthContext";
 import { Dashboard } from "./pages/Dashboard";
-import { GeneratorPage } from "./pages/GeneratorPage";
 import { HomeworkGeneratorPage } from "./pages/HomeworkGeneratorPage";
 import { LessonPlannerPage } from "./pages/LessonPlannerPage";
 import { MyResourcesPage } from "./pages/MyResourcesPage";
@@ -66,7 +65,7 @@ export default function App() {
           <ErrorPage
             statusCode="404"
             title="Page not found"
-            description="That workspace page is not available yet."
+            description="We could not find that page. Return to your dashboard and choose a workspace section."
             onReset={() => setActivePage("dashboard")}
           />
         )}
@@ -77,14 +76,6 @@ export default function App() {
         {activePage === "homework" && <HomeworkGeneratorPage />}
         {activePage === "lesson" && <LessonPlannerPage />}
         {activePage === "explainer" && <TopicExplainerPage />}
-        {isKnownPage &&
-          activePage !== "dashboard" &&
-          activePage !== "resources" &&
-          activePage !== "worksheet" &&
-          activePage !== "quiz" &&
-          activePage !== "homework" &&
-          activePage !== "lesson" &&
-          activePage !== "explainer" && <GeneratorPage page={page} />}
       </ErrorBoundary>
     </AppShell>
   );
