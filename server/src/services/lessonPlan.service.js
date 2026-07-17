@@ -3,17 +3,21 @@ import {
   lessonPlanJsonSchema,
 } from "../prompts/lessonPlan.prompt.js";
 import { ApiError } from "../utils/ApiError.js";
+import { logAiError, logAiStep } from "../utils/aiLogger.js";
 import { generateGeminiJson, getGeminiModel } from "../utils/geminiClient.js";
 
-export async function createLessonPlan(input) {
+export async function createLessonPlan(input, trace) {
+  logAiStep(trace, "service entered", { input });
   const result = await generateGeminiJson({
     prompt: buildLessonPlanPrompt(input),
     schema: lessonPlanJsonSchema,
     responseName: "lesson plan",
     emptyResponseMessage: "Gemini returned an empty lesson plan response",
+    trace,
   });
 
-  const lessonPlan = parseLessonPlanResponse(result.data);
+  const lessonPlan = parseLessonPlanResponse(result.data, trace);
+  logAiStep(trace, "service parsed Gemini response", { title: lessonPlan.title });
 
   return {
     id: result.id,
@@ -24,12 +28,12 @@ export async function createLessonPlan(input) {
   };
 }
 
-function parseLessonPlanResponse(lessonPlan) {
-  validateLessonPlanShape(lessonPlan);
+function parseLessonPlanResponse(lessonPlan, trace) {
+  validateLessonPlanShape(lessonPlan, trace);
   return lessonPlan;
 }
 
-function validateLessonPlanShape(lessonPlan) {
+function validateLessonPlanShape(lessonPlan, trace) {
   const hasCoreFields =
     lessonPlan?.title &&
     Array.isArray(lessonPlan?.objectives) &&
@@ -38,6 +42,8 @@ function validateLessonPlanShape(lessonPlan) {
     lessonPlan?.assessment;
 
   if (!hasCoreFields) {
-    throw new ApiError(502, "Gemini lesson plan response was missing required fields");
+    const error = new ApiError(502, "Gemini lesson plan response was missing required fields");
+    logAiError(trace, "lesson plan shape validation failed", error, { hasCoreFields });
+    throw error;
   }
 }

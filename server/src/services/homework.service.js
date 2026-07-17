@@ -1,16 +1,20 @@
 import { buildHomeworkPrompt, homeworkJsonSchema } from "../prompts/homework.prompt.js";
 import { ApiError } from "../utils/ApiError.js";
+import { logAiError, logAiStep } from "../utils/aiLogger.js";
 import { generateGeminiJson, getGeminiModel } from "../utils/geminiClient.js";
 
-export async function createHomework(input) {
+export async function createHomework(input, trace) {
+  logAiStep(trace, "service entered", { input });
   const result = await generateGeminiJson({
     prompt: buildHomeworkPrompt(input),
     schema: homeworkJsonSchema,
     responseName: "homework",
     emptyResponseMessage: "Gemini returned an empty homework response",
+    trace,
   });
 
-  const homework = parseHomeworkResponse(result.data);
+  const homework = parseHomeworkResponse(result.data, trace);
+  logAiStep(trace, "service parsed Gemini response", { title: homework.title });
 
   return {
     id: result.id,
@@ -21,12 +25,12 @@ export async function createHomework(input) {
   };
 }
 
-function parseHomeworkResponse(homework) {
-  validateHomeworkShape(homework);
+function parseHomeworkResponse(homework, trace) {
+  validateHomeworkShape(homework, trace);
   return homework;
 }
 
-function validateHomeworkShape(homework) {
+function validateHomeworkShape(homework, trace) {
   const hasCoreFields =
     homework?.title &&
     homework?.learningObjective &&
@@ -38,6 +42,11 @@ function validateHomeworkShape(homework) {
     Array.isArray(homework?.teacherNotes) && homework.teacherNotes.length >= 2;
 
   if (!hasCoreFields || !hasTeacherNotes) {
-    throw new ApiError(502, "Gemini homework response was missing required fields");
+    const error = new ApiError(502, "Gemini homework response was missing required fields");
+    logAiError(trace, "homework shape validation failed", error, {
+      hasCoreFields,
+      hasTeacherNotes,
+    });
+    throw error;
   }
 }

@@ -1,16 +1,20 @@
 import { buildWorksheetPrompt, worksheetJsonSchema } from "../prompts/worksheet.prompt.js";
 import { ApiError } from "../utils/ApiError.js";
+import { logAiError, logAiStep } from "../utils/aiLogger.js";
 import { generateGeminiJson, getGeminiModel } from "../utils/geminiClient.js";
 
-export async function createWorksheet(input) {
+export async function createWorksheet(input, trace) {
+  logAiStep(trace, "service entered", { input });
   const result = await generateGeminiJson({
     prompt: buildWorksheetPrompt(input),
     schema: worksheetJsonSchema,
     responseName: "worksheet",
     emptyResponseMessage: "Gemini returned an empty worksheet response",
+    trace,
   });
 
-  const worksheet = parseWorksheetResponse(result.data);
+  const worksheet = parseWorksheetResponse(result.data, trace);
+  logAiStep(trace, "service parsed Gemini response", { title: worksheet.title });
 
   return {
     id: result.id,
@@ -21,12 +25,12 @@ export async function createWorksheet(input) {
   };
 }
 
-function parseWorksheetResponse(worksheet) {
-  validateWorksheetShape(worksheet);
+function parseWorksheetResponse(worksheet, trace) {
+  validateWorksheetShape(worksheet, trace);
   return worksheet;
 }
 
-function validateWorksheetShape(worksheet) {
+function validateWorksheetShape(worksheet, trace) {
   const hasQuestionCount =
     Number.isInteger(worksheet?.numberOfQuestions) &&
     Array.isArray(worksheet?.questions) &&
@@ -37,6 +41,12 @@ function validateWorksheetShape(worksheet) {
     worksheet.answerKey.length === worksheet.numberOfQuestions;
 
   if (!worksheet?.title || !hasQuestionCount || !hasAnswerKey) {
-    throw new ApiError(502, "Gemini worksheet response was missing required fields");
+    const error = new ApiError(502, "Gemini worksheet response was missing required fields");
+    logAiError(trace, "worksheet shape validation failed", error, {
+      hasTitle: Boolean(worksheet?.title),
+      hasQuestionCount,
+      hasAnswerKey,
+    });
+    throw error;
   }
 }

@@ -1,17 +1,24 @@
 import { geminiConfig } from "../config/gemini.js";
 import { ApiError } from "./ApiError.js";
+import { logAiError, logAiStep } from "./aiLogger.js";
 
 let client;
 let GoogleGenAI;
 let Type;
 
-export async function generateGeminiJson({ prompt, schema, responseName, emptyResponseMessage }) {
+export async function generateGeminiJson({ prompt, schema, responseName, emptyResponseMessage, trace }) {
+  logAiStep(trace, "Gemini client entered");
+
   if (!geminiConfig.apiKey) {
-    throw new ApiError(500, "GEMINI_API_KEY is not configured");
+    const error = new ApiError(500, "GEMINI_API_KEY is not configured");
+    logAiError(trace, "Gemini configuration error", error);
+    throw error;
   }
 
   if (!geminiConfig.model) {
-    throw new ApiError(500, "GEMINI_MODEL is not configured");
+    const error = new ApiError(500, "GEMINI_MODEL is not configured");
+    logAiError(trace, "Gemini configuration error", error);
+    throw error;
   }
 
   const { systemInstruction, contents } = normalizePrompt(prompt);
@@ -20,6 +27,15 @@ export async function generateGeminiJson({ prompt, schema, responseName, emptyRe
 
   try {
     const geminiClient = await getClient();
+    const normalizedSchema = normalizeSchema(schema);
+
+    logAiStep(trace, "Gemini request started", {
+      model: geminiConfig.model,
+      responseName,
+      hasSystemInstruction: Boolean(systemInstruction),
+      contentLength: contents.length,
+      schemaProperties: Object.keys(normalizedSchema?.properties ?? {}),
+    });
 
     response = await geminiClient.models.generateContent({
       model: geminiConfig.model,
@@ -27,10 +43,22 @@ export async function generateGeminiJson({ prompt, schema, responseName, emptyRe
       config: {
         systemInstruction,
         responseMimeType: "application/json",
-        responseSchema: normalizeSchema(schema),
+        responseSchema: normalizedSchema,
       },
     });
+
+    logAiStep(trace, "Gemini response received", {
+      responseId: response?.responseId || response?.id,
+      hasText: typeof response?.text === "string" && response.text.trim().length > 0,
+      candidates: response?.candidates?.length ?? 0,
+    });
   } catch (error) {
+    logAiError(trace, "Gemini SDK threw exception", error, {
+      model: geminiConfig.model,
+      responseName,
+      rawMessage: extractGeminiErrorMessage(error),
+    });
+
     if (error instanceof ApiError) {
       throw error;
     }
@@ -41,7 +69,9 @@ export async function generateGeminiJson({ prompt, schema, responseName, emptyRe
   const outputText = extractGeminiText(response);
 
   if (!outputText) {
-    throw new ApiError(502, emptyResponseMessage);
+    const error = new ApiError(502, emptyResponseMessage);
+    logAiError(trace, "Gemini returned empty text", error);
+    throw error;
   }
 
   try {
@@ -49,8 +79,13 @@ export async function generateGeminiJson({ prompt, schema, responseName, emptyRe
       id: response.responseId || response.id || `${responseName}-${Date.now()}`,
       data: JSON.parse(stripJsonCodeFence(outputText)),
     };
-  } catch {
-    throw new ApiError(502, `Gemini returned invalid ${responseName} JSON`);
+  } catch (error) {
+    const apiError = new ApiError(502, `Gemini returned invalid ${responseName} JSON`);
+    logAiError(trace, "Gemini returned invalid JSON", error, {
+      responseName,
+      outputPreview: outputText.slice(0, 500),
+    });
+    throw apiError;
   }
 }
 
@@ -62,8 +97,14 @@ async function getClient() {
   if (!client) {
     if (!GoogleGenAI) {
       try {
+        logAiStep(undefined, "importing @google/genai SDK");
         ({ GoogleGenAI, Type } = await import("@google/genai"));
-      } catch {
+        logAiStep(undefined, "@google/genai SDK imported", {
+          hasGoogleGenAI: Boolean(GoogleGenAI),
+          hasTypeEnum: Boolean(Type),
+        });
+      } catch (error) {
+        logAiError(undefined, "@google/genai SDK import failed", error);
         throw new ApiError(
           500,
           "Google Gen AI SDK is not installed. Run npm install in the server directory.",

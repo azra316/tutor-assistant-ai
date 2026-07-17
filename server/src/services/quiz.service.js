@@ -1,5 +1,6 @@
 import { buildQuizPrompt, quizJsonSchema } from "../prompts/quiz.prompt.js";
 import { ApiError } from "../utils/ApiError.js";
+import { logAiError, logAiStep } from "../utils/aiLogger.js";
 import { generateGeminiJson, getGeminiModel } from "../utils/geminiClient.js";
 
 const requiredQuestionTypes = [
@@ -9,15 +10,18 @@ const requiredQuestionTypes = [
   "short_answer",
 ];
 
-export async function createQuiz(input) {
+export async function createQuiz(input, trace) {
+  logAiStep(trace, "service entered", { input });
   const result = await generateGeminiJson({
     prompt: buildQuizPrompt(input),
     schema: quizJsonSchema,
     responseName: "quiz",
     emptyResponseMessage: "Gemini returned an empty quiz response",
+    trace,
   });
 
-  const quiz = parseQuizResponse(result.data);
+  const quiz = parseQuizResponse(result.data, trace);
+  logAiStep(trace, "service parsed Gemini response", { title: quiz.title });
 
   return {
     id: result.id,
@@ -28,12 +32,12 @@ export async function createQuiz(input) {
   };
 }
 
-function parseQuizResponse(quiz) {
-  validateQuizShape(quiz);
+function parseQuizResponse(quiz, trace) {
+  validateQuizShape(quiz, trace);
   return quiz;
 }
 
-function validateQuizShape(quiz) {
+function validateQuizShape(quiz, trace) {
   const hasQuestionCount =
     Number.isInteger(quiz?.numberOfQuestions) &&
     Array.isArray(quiz?.questions) &&
@@ -50,6 +54,14 @@ function validateQuizShape(quiz) {
     ?.every((question) => Array.isArray(question.choices) && question.choices.length === 4);
 
   if (!quiz?.title || !hasQuestionCount || !hasAnswerKey || !hasAllTypes || !mcqsHaveChoices) {
-    throw new ApiError(502, "Gemini quiz response was missing required fields");
+    const error = new ApiError(502, "Gemini quiz response was missing required fields");
+    logAiError(trace, "quiz shape validation failed", error, {
+      hasTitle: Boolean(quiz?.title),
+      hasQuestionCount,
+      hasAnswerKey,
+      hasAllTypes,
+      mcqsHaveChoices,
+    });
+    throw error;
   }
 }
