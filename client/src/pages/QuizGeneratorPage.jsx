@@ -7,7 +7,6 @@ import {
   HelpCircle,
   ListChecks,
   Loader2,
-  Server,
   Sparkles,
   TextCursorInput,
   ToggleRight,
@@ -62,7 +61,12 @@ function createDraftQuestions({ topic, subject, questionCount }) {
       prompt: `Draft ${questionTypes[type].label.toLowerCase()} question about ${safeTopic} in ${safeSubject}.`,
       choices:
         type === "multiple_choice"
-          ? ["Option A", "Option B", "Option C", "Option D"]
+          ? [
+              `A key idea about ${safeTopic}`,
+              `A related example from ${safeSubject}`,
+              `A common misconception about ${safeTopic}`,
+              `A detail students should review`,
+            ]
           : [],
       points: type === "short_answer" ? 3 : 1,
     };
@@ -78,6 +82,7 @@ export function QuizGeneratorPage() {
     questionCount: 8,
   });
   const [quiz, setQuiz] = useState(null);
+  const [studentResponses, setStudentResponses] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { showToast } = useToast();
@@ -98,7 +103,15 @@ export function QuizGeneratorPage() {
       [field]: nextValue,
     }));
     setQuiz(null);
+    setStudentResponses({});
     setError("");
+  }
+
+  function updateResponse(questionNumber, value) {
+    setStudentResponses((current) => ({
+      ...current,
+      [questionNumber]: value,
+    }));
   }
 
   async function handleSubmit(event) {
@@ -116,6 +129,7 @@ export function QuizGeneratorPage() {
       });
 
       setQuiz(generatedQuiz);
+      setStudentResponses({});
       showToast({
         title: "Quiz generated",
         description: `${generatedQuiz.title} is ready to review.`,
@@ -289,7 +303,7 @@ export function QuizGeneratorPage() {
               className="flex items-start gap-3 rounded-lg border border-meadow/20 bg-white p-4 shadow-soft"
               aria-live="polite"
             >
-              <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
                 <h3 className="font-black text-slateboard">Quiz is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
@@ -325,15 +339,17 @@ export function QuizGeneratorPage() {
             </div>
           </section>
 
-          <section className="grid gap-4">
+          <section className="grid gap-4" aria-label="Quiz questions">
             {questions.map((question) => {
               const type = questionTypes[question.type] ?? questionTypes.short_answer;
               const Icon = type.icon;
+              const choices = getQuestionChoices(question);
+              const selectedResponse = studentResponses[question.number] ?? "";
 
               return (
                 <article
                   key={question.number}
-                  className="rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-coral/35"
+                  className="rounded-lg border border-slateboard/10 bg-white p-6 shadow-soft transition hover:-translate-y-0.5 hover:border-coral/35"
                 >
                   <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex items-start gap-3">
@@ -348,25 +364,56 @@ export function QuizGeneratorPage() {
                             {question.points} {question.points === 1 ? "point" : "points"}
                           </span>
                         </div>
-                        <p className="text-sm leading-6 text-slateboard/75">{question.prompt}</p>
+                        <p className="text-base font-medium leading-7 text-slateboard/80">{question.prompt}</p>
                       </div>
                     </div>
                     <CheckCircle2 className="hidden shrink-0 text-meadow sm:block" size={20} aria-hidden="true" />
                   </div>
 
-                  {question.choices?.length > 0 ? (
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {question.choices.map((choice, index) => (
-                        <div
-                          key={choice}
-                          className="rounded-lg border border-slateboard/10 bg-chalk px-3 py-2 text-sm font-semibold text-slateboard"
-                        >
-                          {String.fromCharCode(65 + index)}. {choice}
-                        </div>
-                      ))}
-                    </div>
+                  {choices.length > 0 ? (
+                    <fieldset>
+                      <legend className="sr-only">Answer choices for question {question.number}</legend>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {choices.map((choice, index) => {
+                          const optionId = `question-${question.number}-choice-${index}`;
+                          const isSelected = selectedResponse === choice;
+
+                          return (
+                            <label
+                              key={choice}
+                              htmlFor={optionId}
+                              className={`flex min-h-12 cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 text-base font-semibold leading-6 transition focus-within:outline focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-meadow/45 ${
+                                isSelected
+                                  ? "border-coral bg-coral/10 text-slateboard shadow-sm"
+                                  : "border-slateboard/10 bg-chalk text-slateboard hover:border-coral/45 hover:bg-coral/5"
+                              }`}
+                            >
+                              <input
+                                id={optionId}
+                                className="mt-1 size-4 accent-coral"
+                                type="radio"
+                                name={`question-${question.number}`}
+                                value={choice}
+                                checked={isSelected}
+                                onChange={() => updateResponse(question.number, choice)}
+                              />
+                              <span>{question.type === "multiple_choice" ? `${String.fromCharCode(65 + index)}. ` : ""}{choice}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </fieldset>
                   ) : (
-                    <div className="mt-4 h-12 rounded-lg border border-dashed border-slateboard/20 bg-chalk" />
+                    <label className="grid gap-2">
+                      <span className="text-sm font-black text-slateboard/60">Student response</span>
+                      <TextInput
+                        as="textarea"
+                        rows={question.type === "short_answer" ? 4 : 2}
+                        value={selectedResponse}
+                        onChange={(event) => updateResponse(question.number, event.target.value)}
+                        placeholder={question.type === "fill_blank" ? "Type the missing word or phrase" : "Type a short answer"}
+                      />
+                    </label>
                   )}
                 </article>
               );
@@ -382,9 +429,9 @@ export function QuizGeneratorPage() {
                   </div>
                   <div>
                     <h3 className="font-black">Answer key</h3>
-                    <p className="text-sm text-white/68">
+                    <p className="text-base text-white/78">
                       {quiz?.answerKey
-                        ? "Generated answers with short explanations."
+                        ? "Answers and short explanations for teacher review."
                         : "Create a quiz to see the answer key here."}
                     </p>
                   </div>
@@ -393,13 +440,13 @@ export function QuizGeneratorPage() {
               </div>
 
               {quiz?.answerKey && (
-                <div className="grid gap-2 md:grid-cols-2">
+                <div className="grid gap-3 md:grid-cols-2">
                   {quiz.answerKey.map((answer) => (
-                    <div key={answer.number} className="rounded-lg bg-white/10 p-3 text-sm">
+                    <div key={answer.number} className="rounded-lg bg-white/10 p-4 text-base leading-7">
                       <p className="font-black">
                         {answer.number}. {answer.answer}
                       </p>
-                      <p className="mt-1 text-white/68">{answer.explanation}</p>
+                      <p className="mt-1 text-white/78">{answer.explanation}</p>
                     </div>
                   ))}
                 </div>
@@ -410,4 +457,10 @@ export function QuizGeneratorPage() {
       </section>
     </div>
   );
+}
+
+function getQuestionChoices(question) {
+  if (question.choices?.length > 0) return question.choices;
+  if (question.type === "true_false") return ["True", "False"];
+  return [];
 }

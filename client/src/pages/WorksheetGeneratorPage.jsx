@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   ClipboardCheck,
   Loader2,
-  Server,
   FileText,
   Layers3,
   Sparkles,
@@ -270,7 +269,7 @@ export function WorksheetGeneratorPage() {
               className="flex items-start gap-3 rounded-lg border border-meadow/20 bg-white p-4 shadow-soft"
               aria-live="polite"
             >
-              <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
                 <h3 className="font-black text-slateboard">Worksheet is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
@@ -304,11 +303,11 @@ export function WorksheetGeneratorPage() {
             </div>
           </section>
 
-          <section className="grid gap-4 md:grid-cols-2">
+          <section className="grid gap-4" aria-label="Worksheet questions">
             {displayedQuestions.map((question) => (
               <article
                 key={question.id ?? question.number}
-                className="rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-meadow/35"
+                className="rounded-lg border border-slateboard/10 bg-white p-6 shadow-soft transition hover:-translate-y-0.5 hover:border-meadow/35"
               >
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -327,11 +326,17 @@ export function WorksheetGeneratorPage() {
                   <CheckCircle2 className="text-meadow" size={20} aria-hidden="true" />
                 </div>
 
-                <p className="text-sm leading-6 text-slateboard/70">{question.prompt}</p>
+                <p className="text-base font-medium leading-7 text-slateboard/80">{question.prompt}</p>
 
-                <div className="mt-5 grid gap-2">
-                  <div className="h-10 rounded-lg border border-dashed border-slateboard/20 bg-chalk" />
-                  <div className="h-10 rounded-lg border border-dashed border-slateboard/20 bg-chalk" />
+                <div className="mt-5 rounded-lg bg-chalk p-4" aria-label={`Response space for question ${question.id ?? question.number}`}>
+                  <p className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-slateboard/45">
+                    Student response
+                  </p>
+                  <div className="grid gap-4">
+                    <div className="border-b border-slateboard/20" />
+                    <div className="border-b border-slateboard/20" />
+                    <div className="border-b border-slateboard/20" />
+                  </div>
                 </div>
               </article>
             ))}
@@ -360,15 +365,15 @@ export function WorksheetGeneratorPage() {
                     Answer key
                   </h3>
                   {worksheet?.answerKey ? (
-                    <div className="mt-2 flex flex-wrap gap-2 text-sm text-white/80">
+                    <div className="mt-3 grid gap-2 text-base text-white/86 sm:grid-cols-2">
                       {worksheet.answerKey.map((answer) => (
-                        <span key={answer.number} className="rounded-full bg-white/10 px-3 py-1">
+                        <span key={answer.number} className="rounded-lg bg-white/10 px-3 py-2">
                           {answer.number}. {answer.answer}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-white/68">
+                    <p className="text-base text-white/78">
                       Create a worksheet to see the answer key here.
                     </p>
                   )}

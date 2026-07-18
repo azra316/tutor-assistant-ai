@@ -1,7 +1,7 @@
 export function Card({ children, className = "" }) {
   return (
     <section
-      className={`animate-fade-in rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-slateboard/20 dark:bg-[#17313B] dark:text-white ${className}`}
+      className={`animate-fade-in rounded-lg border border-slateboard/10 bg-white p-6 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-slateboard/20 dark:bg-[#17313B] dark:text-white ${className}`}
     >
       {children}
     </section>
@@ -17,7 +17,7 @@ export function Badge({ children, tone = "green" }) {
   };
 
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${tones[tone]}`}>
+    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-black ${tones[tone]}`}>
       {children}
     </span>
   );

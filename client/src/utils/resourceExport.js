@@ -29,14 +29,16 @@ export function printResource(resource) {
       <head>
         <title>${escapeHtml(resource.title)}</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 32px; color: #17313B; }
-          h1 { margin-bottom: 8px; }
-          pre { white-space: pre-wrap; line-height: 1.5; background: #F6F8F7; padding: 16px; border-radius: 8px; font-family: Arial, sans-serif; }
+          @page { margin: 0.7in; }
+          body { font-family: Arial, sans-serif; margin: 0; color: #17313B; font-size: 13px; line-height: 1.55; }
+          h1 { margin: 0 0 6px; font-size: 24px; line-height: 1.2; }
+          .eyebrow { margin: 0 0 22px; color: #1E7F67; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+          pre { white-space: pre-wrap; line-height: 1.6; font-family: Arial, sans-serif; font-size: 13px; }
         </style>
       </head>
       <body>
         <h1>${escapeHtml(resource.title)}</h1>
-        <p>${escapeHtml(formatType(resource.type))}</p>
+        <p class="eyebrow">${escapeHtml(formatType(resource.type))}</p>
         <pre>${escapeHtml(printableText)}</pre>
       </body>
     </html>
@@ -59,22 +61,28 @@ export function downloadResourcePdf(resource) {
 }
 
 function createSimplePdf(lines) {
-  const escapedLines = lines.flatMap((line) => wrapLine(line, 88)).slice(0, 58);
-  const content = [
-    "BT",
-    "/F1 11 Tf",
-    "50 780 Td",
-    "14 TL",
-    ...escapedLines.map((line) => `(${escapePdfText(line)}) Tj T*`),
-    "ET",
-  ].join("\n");
+  const printableLines = preparePdfLines(lines);
+  const pages = paginate(printableLines, 44);
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
-    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "",
     "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`,
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
   ];
+
+  pages.forEach((pageLines, pageIndex) => {
+    const pageObjectNumber = 5 + pageIndex * 2;
+    const contentObjectNumber = pageObjectNumber + 1;
+    const content = buildPageContent(pageLines, pageIndex);
+    objects.push(
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`,
+      `<< /Length ${content.length} >>\nstream\n${content}\nendstream`,
+    );
+  });
+
+  const pageKids = pages.map((_, pageIndex) => `${5 + pageIndex * 2} 0 R`).join(" ");
+  objects[1] = `<< /Type /Pages /Kids [${pageKids}] /Count ${pages.length} >>`;
+
   let pdf = "%PDF-1.4\n";
   const offsets = [0];
 
@@ -90,12 +98,68 @@ function createSimplePdf(lines) {
   return pdf;
 }
 
+function preparePdfLines(lines) {
+  return lines.flatMap((line, index) => {
+    const maxLength = index < 2 ? 74 : 86;
+    return wrapLine(line, maxLength);
+  });
+}
+
+function paginate(lines, pageLength) {
+  const pages = [];
+  for (let index = 0; index < lines.length; index += pageLength) {
+    pages.push(lines.slice(index, index + pageLength));
+  }
+  return pages.length > 0 ? pages : [[""]];
+}
+
+function buildPageContent(lines, pageIndex) {
+  const commands = ["BT"];
+
+  if (pageIndex === 0) {
+    commands.push("/F2 18 Tf", "50 760 Td", "24 TL");
+  } else {
+    commands.push("/F2 12 Tf", "50 760 Td", "18 TL", `(${escapePdfText("Tutor Assistant Resource")}) Tj T*`, "/F1 11 Tf");
+  }
+
+  lines.forEach((line, lineIndex) => {
+    if (pageIndex === 0 && lineIndex === 1) {
+      commands.push("/F1 10 Tf", "14 TL");
+    } else if (pageIndex === 0 && lineIndex === 2) {
+      commands.push("/F1 11 Tf", "16 TL");
+    }
+
+    commands.push(`(${escapePdfText(line)}) Tj T*`);
+  });
+
+  commands.push("ET");
+  return commands.join("\n");
+}
+
 function wrapLine(line, maxLength) {
   if (line.length <= maxLength) return [line];
   const chunks = [];
-  for (let index = 0; index < line.length; index += maxLength) {
-    chunks.push(line.slice(index, index + maxLength));
+  const words = String(line).split(" ");
+  let current = "";
+
+  words.forEach((word) => {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length > maxLength && current) {
+      chunks.push(current);
+      current = word;
+    } else {
+      current = next;
+    }
+  });
+
+  if (current) chunks.push(current);
+
+  if (chunks.length === 0) {
+    for (let index = 0; index < line.length; index += maxLength) {
+      chunks.push(line.slice(index, index + maxLength));
+    }
   }
+
   return chunks;
 }
 

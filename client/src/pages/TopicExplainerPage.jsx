@@ -7,7 +7,6 @@ import {
   Lightbulb,
   Loader2,
   Rocket,
-  Server,
   Sparkles,
   TriangleAlert,
 } from "lucide-react";
@@ -220,7 +219,7 @@ export function TopicExplainerPage() {
               className="flex items-start gap-3 rounded-lg border border-meadow/20 bg-white p-4 shadow-soft"
               aria-live="polite"
             >
-              <Server className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 shrink-0 text-meadow" size={20} aria-hidden="true" />
               <div>
                 <h3 className="font-black text-slateboard">Explanation is ready</h3>
                 <p className="mt-1 text-sm leading-6 text-slateboard/65">
