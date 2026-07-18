@@ -102,38 +102,6 @@ npm run dev
 cd client
 npm run dev
 ```
----
-## Repository Structure
-
-```txt
-Tutor-Assistant-AI/
-├── client/                 # React + Vite frontend
-│   ├── src/
-│   │   ├── components/     # Shared layout and UI components
-│   │   ├── data/           # Navigation metadata
-│   │   ├── features/       # API clients and feature state
-│   │   ├── pages/          # App pages
-│   │   ├── styles/         # Tailwind entry CSS
-│   │   └── utils/          # Shared frontend utilities
-│   ├── .env.example
-│   └── package.json
-├── server/                 # Express + MongoDB backend
-│   ├── src/
-│   │   ├── config/         # Database and Gemini configuration
-│   │   ├── controllers/    # Route controllers
-│   │   ├── middleware/     # Auth, validation, and error middleware
-│   │   ├── models/         # Mongoose models
-│   │   ├── prompts/        # AI prompt builders
-│   │   ├── routes/         # Express routes
-│   │   ├── services/       # Business logic
-│   │   └── utils/          # Shared backend utilities
-│   ├── .env.example
-│   └── package.json
-├── DEPLOYMENT.md
-├── render.yaml
-├── package.json
-└── README.md
-```
 
 ## 🎯 Why Tutor Assistant AI?
 
