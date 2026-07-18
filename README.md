@@ -8,7 +8,7 @@ Tutor Assistant AI is a full-stack AI application designed to simplify lesson pl
 
 **Frontend:** https://tutor-assistant-ai.vercel.app
 
-> **Backend API:** https://tutor-assistant-ai.onrender.com
+**Backend API:** https://tutor-assistant-ai.onrender.com
 
 ---
 
