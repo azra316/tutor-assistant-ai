@@ -42,6 +42,14 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 
+app.get("/", (_request, response) => {
+  response.json({
+    status: "OK",
+    service: "Tutor Assistant AI Backend",
+    message: "Backend is running successfully.",
+  });
+});
+
 app.get("/health", (_request, response) => {
   response.json({
     status: "ok",
