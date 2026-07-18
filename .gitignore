@@ -1,7 +1,54 @@
+# Dependencies
 node_modules/
+*/node_modules/
+
+# Production builds
 dist/
+build/
+client/dist/
+
+# Environment files
 .env
 .env.*
 !.env.example
+!client/.env.example
+!server/.env.example
+
+# Logs and diagnostics
+logs/
+*.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test and coverage output
+coverage/
+.nyc_output/
+
+# Caches and package manager artifacts
+.npm/
+.cache/
+.parcel-cache/
+.vite/
 work/
+
+# Codex / AI workspace artifacts
+.codex/
+.agents/
+.sandbox/
+cache/
+codex_app_directory/
+
+# Local deployment artifacts
+.vercel/
+.render/

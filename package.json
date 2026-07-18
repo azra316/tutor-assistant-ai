@@ -1,0 +1,29 @@
+{
+  "name": "tutor-assistant-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered worksheet, quiz, homework, lesson plan, and topic explanation generator for teachers.",
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install --prefix client && npm install --prefix server",
+    "client:dev": "npm run dev --prefix client",
+    "server:dev": "npm run dev --prefix server",
+    "client:build": "npm run build --prefix client",
+    "server:start": "npm start --prefix server",
+    "build": "npm run client:build"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "education",
+    "teachers",
+    "mern",
+    "react",
+    "express",
+    "mongodb",
+    "gemini",
+    "ai"
+  ],
+  "license": "MIT"
+}
