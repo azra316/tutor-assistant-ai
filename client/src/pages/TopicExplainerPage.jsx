@@ -97,7 +97,7 @@ export function TopicExplainerPage() {
         <div className="grid gap-6 p-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
           <div>
             <div className="mb-4 flex flex-wrap items-center gap-3">
-              <div className="grid size-12 place-items-center rounded-lg bg-[#4E6E81] text-white">
+              <div className="grid size-12 place-items-center rounded-lg bg-info text-white">
                 <HelpCircle size={24} aria-hidden="true" />
               </div>
               <Badge tone="blue">Topic explainer</Badge>
@@ -112,7 +112,7 @@ export function TopicExplainerPage() {
 
           <div className="rounded-lg bg-skywash p-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-lg bg-white text-[#4E6E81]">
+              <div className="grid size-10 place-items-center rounded-lg bg-white text-info">
                 <Sparkles size={20} aria-hidden="true" />
               </div>
               <div>
@@ -207,7 +207,7 @@ export function TopicExplainerPage() {
               className="flex items-center gap-3 rounded-lg border border-slateboard/20 bg-skywash p-4 text-sm font-semibold text-slateboard"
               aria-live="polite"
             >
-              <Loader2 className="animate-spin text-[#4E6E81]" size={20} aria-hidden="true" />
+              <Loader2 className="animate-spin text-info" size={20} aria-hidden="true" />
               Creating your explanation...
             </section>
           )}
@@ -232,7 +232,7 @@ export function TopicExplainerPage() {
           <section className="rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4E6E81]">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-info">
                   Student explanation
                 </p>
                 <h3 className="mt-2 text-2xl font-black text-slateboard">
@@ -255,7 +255,7 @@ export function TopicExplainerPage() {
           <section className="grid gap-4 lg:grid-cols-2">
             <Card>
               <div className="mb-3 flex items-center gap-3">
-                <BookOpenText className="text-[#4E6E81]" size={20} aria-hidden="true" />
+                <BookOpenText className="text-info" size={20} aria-hidden="true" />
                 <h3 className="font-black text-slateboard">Simple explanation</h3>
               </div>
               <p className="text-sm leading-6 text-slateboard/70">
@@ -276,7 +276,7 @@ export function TopicExplainerPage() {
 
           <Card className="bg-skywash">
             <div className="flex items-start gap-3">
-              <div className="grid size-11 shrink-0 place-items-center rounded-lg bg-white text-[#7A4B04] dark:text-honey">
+              <div className="grid size-11 shrink-0 place-items-center rounded-lg bg-white text-warningText dark:text-honey">
                 <Lightbulb size={22} aria-hidden="true" />
               </div>
               <div>

@@ -112,7 +112,7 @@ export function HomeworkGeneratorPage() {
         <div className="grid gap-6 p-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
           <div>
             <div className="mb-4 flex flex-wrap items-center gap-3">
-              <div className="grid size-12 place-items-center rounded-lg bg-honey text-[#12343B]">
+              <div className="grid size-12 place-items-center rounded-lg bg-honey text-slateboard">
                 <BookOpenCheck size={24} aria-hidden="true" />
               </div>
               <Badge tone="honey">Homework studio</Badge>
@@ -127,7 +127,7 @@ export function HomeworkGeneratorPage() {
 
           <div className="rounded-lg bg-skywash p-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-lg bg-white text-[#7A4B04] dark:text-honey">
+              <div className="grid size-10 place-items-center rounded-lg bg-white text-warningText dark:text-honey">
                 <Sparkles size={20} aria-hidden="true" />
               </div>
               <div>
@@ -230,7 +230,7 @@ export function HomeworkGeneratorPage() {
               className="flex items-center gap-3 rounded-lg border border-honey/30 bg-honey/20 p-4 text-sm font-semibold text-slateboard"
               aria-live="polite"
             >
-              <Loader2 className="animate-spin text-[#7A4B04] dark:text-honey" size={20} aria-hidden="true" />
+              <Loader2 className="animate-spin text-warningText dark:text-honey" size={20} aria-hidden="true" />
               Creating your homework...
             </section>
           )}
@@ -255,7 +255,7 @@ export function HomeworkGeneratorPage() {
           <section className="rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#7A4B04] dark:text-honey">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-warningText dark:text-honey">
                   Student homework
                 </p>
                 <h3 className="mt-2 text-2xl font-black text-slateboard">
@@ -290,7 +290,7 @@ export function HomeworkGeneratorPage() {
 
             <Card>
               <div className="mb-3 flex items-center gap-3">
-                <Clock3 className="text-[#7A4B04] dark:text-honey" size={20} aria-hidden="true" />
+                <Clock3 className="text-warningText dark:text-honey" size={20} aria-hidden="true" />
                 <h3 className="font-black text-slateboard">Estimated completion time</h3>
               </div>
               <p className="text-2xl font-black text-slateboard">

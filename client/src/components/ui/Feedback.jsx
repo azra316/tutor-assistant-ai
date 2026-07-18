@@ -30,7 +30,7 @@ export function ToastProvider({ children }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`animate-toast-in rounded-lg border bg-white p-4 shadow-soft dark:bg-[#17313B] ${
+            className={`animate-toast-in rounded-lg border bg-white p-4 shadow-soft ${
               toast.tone === "error" ? "border-coral/25" : "border-meadow/25"
             }`}
             role={toast.tone === "error" ? "alert" : "status"}
@@ -76,7 +76,7 @@ export function useToast() {
 export function LoadingSkeleton({ title = "Generating content", lines = 4 }) {
   return (
     <section
-      className="animate-fade-in rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft dark:bg-[#17313B]"
+      className="animate-fade-in rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft"
       aria-busy="true"
       aria-live="polite"
     >
@@ -108,7 +108,7 @@ export function EmptyState({
   action,
 }) {
   return (
-    <section className="animate-fade-in rounded-lg border border-dashed border-slateboard/20 bg-white p-6 text-center dark:bg-[#17313B]">
+    <section className="animate-fade-in rounded-lg border border-dashed border-slateboard/20 bg-white p-6 text-center">
       <div className="mx-auto grid size-12 place-items-center rounded-lg bg-skywash text-slateboard">
         <Icon size={23} aria-hidden="true" />
       </div>
@@ -128,7 +128,7 @@ export function ErrorPage({
   return (
     <div className="grid min-h-[60vh] place-items-center">
       <section
-        className="max-w-xl rounded-lg border border-coral/20 bg-white p-8 text-center shadow-soft dark:bg-[#17313B]"
+        className="max-w-xl rounded-lg border border-coral/20 bg-white p-8 text-center shadow-soft"
         role="alert"
       >
         <div className="mx-auto grid size-14 place-items-center rounded-lg bg-coral/10 text-coral">

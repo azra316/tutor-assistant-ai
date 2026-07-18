@@ -438,7 +438,7 @@ function renderEditableFields(value, path, onChange) {
         <div key={[...path, key].join(".")} className="grid gap-2">
           <span className="text-sm font-black text-slateboard">{formatFieldLabel(key)}</span>
           {nestedValue && typeof nestedValue === "object" ? (
-            <div className="grid gap-3 rounded-lg border border-slateboard/10 bg-white p-3 dark:bg-[#17313B]">
+            <div className="grid gap-3 rounded-lg border border-slateboard/10 bg-white p-3">
               {renderEditableFields(nestedValue, [...path, key], onChange)}
             </div>
           ) : (

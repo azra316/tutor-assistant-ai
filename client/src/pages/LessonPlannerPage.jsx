@@ -316,7 +316,7 @@ export function LessonPlannerPage() {
 
             <Card>
               <div className="mb-3 flex items-center gap-3">
-                <Clock3 className="text-[#7A4B04] dark:text-honey" size={20} aria-hidden="true" />
+                <Clock3 className="text-warningText dark:text-honey" size={20} aria-hidden="true" />
                 <h3 className="font-black text-slateboard">Activities</h3>
               </div>
               <div className="grid gap-3">

@@ -34,7 +34,7 @@ const statCards = [
     key: "totalHomework",
     label: "Total Homework",
     icon: BookOpenCheck,
-    tone: "bg-honey text-[#12343B]",
+    tone: "bg-honey text-slateboard",
   },
   {
     key: "totalLessonPlans",
@@ -46,7 +46,7 @@ const statCards = [
     key: "totalTopicExplanations",
     label: "Total Topic Explanations",
     icon: HelpCircle,
-    tone: "bg-[#4E6E81] text-white",
+    tone: "bg-info text-white",
   },
 ];
 

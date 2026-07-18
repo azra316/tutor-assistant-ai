@@ -1,7 +1,7 @@
 export function Card({ children, className = "" }) {
   return (
     <section
-      className={`animate-fade-in rounded-lg border border-slateboard/10 bg-white p-6 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-slateboard/20 dark:bg-[#17313B] dark:text-white ${className}`}
+      className={`animate-fade-in rounded-lg border border-slateboard/10 bg-white p-6 text-slateboard shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-slateboard/20 ${className}`}
     >
       {children}
     </section>
@@ -12,7 +12,7 @@ export function Badge({ children, tone = "green" }) {
   const tones = {
     green: "bg-meadow/10 text-meadow",
     coral: "bg-coral/10 text-coral",
-    honey: "bg-honey/20 text-[#7A4B04] dark:text-honey",
+    honey: "bg-honey/20 text-warningText dark:text-honey",
     blue: "bg-skywash text-slateboard dark:bg-white/10 dark:text-white",
   };
 

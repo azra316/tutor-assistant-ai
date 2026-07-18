@@ -9,8 +9,12 @@ export default {
         chalk: "#F7FAF8",
         slateboard: "#12343B",
         meadow: "#1E7F67",
+        meadowHover: "#176B57",
+        meadowActive: "#115344",
         coral: "#D95D4E",
         honey: "#F2B84B",
+        info: "#4E6E81",
+        warningText: "#7A4B04",
         skywash: "#EAF4F8",
       },
       boxShadow: {
