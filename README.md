@@ -12,7 +12,7 @@ Tutor Assistant AI is a full-stack AI application designed to simplify lesson pl
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 - 📄 AI Worksheet Generator
 - 📝 AI Quiz Generator
@@ -103,13 +103,6 @@ cd client
 npm run dev
 ```
 
-## 🎯 Why Tutor Assistant AI?
-
-Teachers spend hours preparing classroom materials.
-
-Tutor Assistant AI reduces that work to a few seconds by using AI to generate high-quality, editable, and printable educational resources, allowing educators to focus more on teaching and less on preparation.
-
----
 ## Why Tutor Assistant AI?
 
 Tutor Assistant AI is built specifically for teachers.
@@ -130,7 +123,7 @@ Instead of learning prompt engineering, teachers simply select the subject, grad
 Our goal isn't to replace ChatGPT—it's to make AI faster, simpler, and more practical for teachers.
 ---
 
-## 👩‍💻 Author
+## Author
 
 **Azra**
 
