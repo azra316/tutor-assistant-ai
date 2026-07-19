@@ -23,11 +23,11 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
             </div>
             <div>
               <p className="text-base font-black">Tutor Assistant</p>
-              <p className="text-xs font-semibold text-white/65">AI classroom studio</p>
+              <p className="text-xs font-semibold text-white/72">AI classroom studio</p>
             </div>
           </div>
           <button
-            className="grid size-10 place-items-center rounded-lg text-white/75 hover:bg-white/10 lg:hidden"
+            className="grid size-10 place-items-center rounded-lg text-white/80 transition hover:bg-white/10 hover:text-white lg:hidden"
             type="button"
             aria-label="Close navigation"
             onClick={onClose}
@@ -48,7 +48,7 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
                 className={`flex min-h-12 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-bold transition duration-200 hover:translate-x-0.5 ${
                   isActive
                     ? "bg-white text-slateboard shadow-soft dark:bg-white/15 dark:text-white"
-                    : "text-white/78 hover:bg-white/10 hover:text-white"
+                    : "text-white/82 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-current={isActive ? "page" : undefined}
               >
@@ -60,14 +60,14 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
         </nav>
 
         {user && (
-          <div className="mx-4 rounded-lg bg-white/10 p-4">
+          <div className="mx-4 rounded-lg border border-white/10 bg-white/10 p-4">
             <div className="flex items-center gap-3">
               <div className="grid size-10 place-items-center rounded-lg bg-white text-slateboard dark:bg-white/15 dark:text-white">
                 <UserRound size={19} aria-hidden="true" />
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-black">{user.fullName}</p>
-                <p className="truncate text-xs font-semibold text-white/62">{user.email}</p>
+                <p className="truncate text-xs font-semibold text-white/72">{user.email}</p>
               </div>
             </div>
             <button
@@ -81,12 +81,12 @@ export function Sidebar({ activePage, onNavigate, isOpen, onClose, user, onLogou
           </div>
         )}
 
-        <div className="m-4 rounded-lg bg-white/10 p-4">
+        <div className="m-4 rounded-lg border border-white/10 bg-white/10 p-4">
           <div className="mb-3 flex items-center gap-2 text-sm font-bold">
             <Sparkles size={17} aria-hidden="true" />
             Smart planning tip
           </div>
-          <p className="text-sm leading-6 text-white/72">
+          <p className="text-sm leading-6 text-white/78">
             Use grade level, topic, and student needs together for stronger classroom outputs.
           </p>
         </div>

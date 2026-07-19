@@ -1,4 +1,4 @@
-import { GraduationCap, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { GraduationCap, Loader2, LockKeyhole, UserRound } from "lucide-react";
 import { useState } from "react";
 import { Badge, Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
@@ -154,10 +154,10 @@ function AuthLayout({ title, subtitle, children }) {
             <GraduationCap size={17} />
             Tutor Assistant AI
           </div>
-          <h1 className="text-5xl font-black leading-tight text-slateboard">
+          <h1 className="ui-text-heading text-5xl leading-tight">
             Secure planning tools for focused teachers.
           </h1>
-          <p className="mt-5 text-base leading-7 text-slateboard/65">
+          <p className="ui-text-secondary mt-5 text-base leading-7">
             Generate worksheets, quizzes, homework, lesson plans, and explainers from one protected workspace.
           </p>
         </div>
@@ -167,8 +167,8 @@ function AuthLayout({ title, subtitle, children }) {
         <Card className="w-full max-w-md">
           <div className="mb-6">
             <Badge tone="blue">Teacher account</Badge>
-            <h2 className="mt-4 text-2xl font-black text-slateboard">{title}</h2>
-            <p className="mt-2 text-sm leading-6 text-slateboard/60">{subtitle}</p>
+            <h2 className="ui-text-heading mt-4 text-2xl">{title}</h2>
+            <p className="ui-text-secondary mt-2 text-sm leading-6">{subtitle}</p>
           </div>
           {children}
         </Card>
@@ -187,7 +187,7 @@ function AuthError({ message }) {
 
 function AuthSwitch({ text, actionText, onClick }) {
   return (
-    <p className="text-center text-sm text-slateboard/60">
+    <p className="ui-text-secondary text-center text-sm">
       {text}{" "}
       <button className="font-black text-meadow hover:underline" type="button" onClick={onClick}>
         {actionText}

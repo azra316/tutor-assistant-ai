@@ -6,6 +6,7 @@
   --color-surface-page: #f7faf8;
   --color-surface-card: #ffffff;
   --color-surface-soft: #eaf4f8;
+  --color-surface-raised: #ffffff;
   --color-text-primary: #12343b;
   --color-text-body: rgba(18, 52, 59, 0.8);
   --color-text-secondary: rgba(18, 52, 59, 0.65);
@@ -17,6 +18,10 @@
   --color-accent-info: #4e6e81;
   --color-accent-warning: #7a4b04;
   --color-border-soft: rgba(18, 52, 59, 0.14);
+  --color-border-strong: rgba(18, 52, 59, 0.22);
+  --shadow-soft-token: 0 18px 45px rgba(18, 52, 59, 0.1);
+  --shadow-raised-token: 0 18px 45px rgba(18, 52, 59, 0.14);
+  --radius-control: 0.5rem;
   color: #17202a;
   background: #f7faf8;
   font-synthesis: none;
@@ -29,6 +34,7 @@
   --color-surface-page: #0f252c;
   --color-surface-card: #17313b;
   --color-surface-soft: #21434d;
+  --color-surface-raised: #1b3943;
   --color-text-primary: #f4fbfa;
   --color-text-body: rgba(244, 251, 250, 0.9);
   --color-text-secondary: rgba(244, 251, 250, 0.78);
@@ -40,6 +46,9 @@
   --color-accent-info: #a8d5e6;
   --color-accent-warning: #f7d78a;
   --color-border-soft: rgba(255, 255, 255, 0.18);
+  --color-border-strong: rgba(255, 255, 255, 0.28);
+  --shadow-soft-token: 0 18px 45px rgba(0, 0, 0, 0.24);
+  --shadow-raised-token: 0 22px 55px rgba(0, 0, 0, 0.32);
   color: #eef7f5;
   background: #0f252c;
 }
@@ -94,6 +103,195 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 3px solid rgba(30, 127, 103, 0.45);
   outline-offset: 3px;
+}
+
+@layer components {
+  .ui-surface {
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-soft);
+    color: var(--color-text-primary);
+  }
+
+  .ui-surface-soft {
+    background: var(--color-surface-soft);
+    color: var(--color-text-primary);
+  }
+
+  .ui-card {
+    animation: fade-in 420ms ease both;
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-soft-token);
+    color: var(--color-text-primary);
+    padding: 1.5rem;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .ui-card:hover {
+    border-color: var(--color-border-strong);
+    transform: translateY(-2px);
+  }
+
+  .ui-text-heading {
+    color: var(--color-text-primary);
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .ui-text-body {
+    color: var(--color-text-body);
+  }
+
+  .ui-text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .ui-text-muted {
+    color: var(--color-text-muted);
+  }
+
+  .ui-text-subtle {
+    color: var(--color-text-subtle);
+  }
+
+  .ui-label {
+    color: var(--color-text-primary);
+    font-weight: 800;
+  }
+
+  .ui-button {
+    align-items: center;
+    border-radius: var(--radius-control);
+    display: inline-flex;
+    font-weight: 800;
+    gap: 0.5rem;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.625rem 1rem;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .ui-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .ui-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+  }
+
+  .ui-button-primary {
+    background: var(--color-accent-primary);
+    box-shadow: var(--shadow-soft-token);
+    color: #ffffff;
+  }
+
+  .dark .ui-button-primary {
+    color: #0f252c;
+  }
+
+  .ui-button-primary:hover:not(:disabled) {
+    background: #176b57;
+  }
+
+  .dark .ui-button-primary:hover:not(:disabled) {
+    background: #67d4ba;
+    color: #0f252c;
+  }
+
+  .ui-button-primary:active:not(:disabled) {
+    background: #115344;
+  }
+
+  .ui-button-secondary {
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-soft);
+    color: var(--color-text-primary);
+  }
+
+  .ui-button-secondary:hover:not(:disabled) {
+    background: var(--color-surface-soft);
+    border-color: var(--color-border-strong);
+  }
+
+  .ui-button-ghost {
+    color: var(--color-text-primary);
+  }
+
+  .ui-button-ghost:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+  }
+
+  .ui-input {
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-control);
+    box-shadow: 0 1px 2px rgba(18, 52, 59, 0.06);
+    color: var(--color-text-primary);
+    font-weight: 600;
+    min-height: 2.75rem;
+    padding: 0.625rem 0.75rem;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .ui-input:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  .ui-input::placeholder {
+    color: var(--color-text-subtle);
+  }
+
+  .ui-badge {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.8125rem;
+    font-weight: 900;
+    line-height: 1.45;
+    padding: 0.25rem 0.625rem;
+  }
+
+  .ui-badge-green {
+    background: color-mix(in srgb, var(--color-accent-primary) 13%, transparent);
+    color: var(--color-accent-primary-readable);
+  }
+
+  .dark .ui-badge-green {
+    color: var(--color-accent-primary);
+  }
+
+  .ui-badge-coral {
+    background: color-mix(in srgb, var(--color-accent-danger) 13%, transparent);
+    color: var(--color-accent-danger);
+  }
+
+  .ui-badge-honey {
+    background: color-mix(in srgb, var(--color-accent-warning) 18%, transparent);
+    color: var(--color-accent-warning);
+  }
+
+  .ui-badge-blue {
+    background: var(--color-surface-soft);
+    color: var(--color-text-primary);
+  }
+
+  .dark .ui-badge-blue {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
 }
 
 .app-scrollbar {

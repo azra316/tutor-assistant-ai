@@ -5,7 +5,6 @@ import {
   FileText,
   GraduationCap,
   HelpCircle,
-  Loader2,
   RefreshCw,
   Sparkles,
   TriangleAlert,
@@ -109,12 +108,12 @@ export function Dashboard({ onNavigate }) {
             </div>
           </div>
 
-          <div className="rounded-lg bg-white p-4 text-slateboard">
-            <p className="text-sm font-bold text-slateboard/58">Today</p>
-            <p className="mt-2 text-xl font-black">{formatToday()}</p>
-            <div className="mt-4 rounded-lg bg-skywash p-4">
-              <p className="text-sm font-bold text-slateboard/58">Total generated</p>
-              <p className="mt-2 text-3xl font-black">{totalResources}</p>
+          <div className="ui-surface rounded-lg p-4">
+            <p className="ui-text-muted text-sm font-bold">Today</p>
+            <p className="ui-text-heading mt-2 text-xl">{formatToday()}</p>
+            <div className="ui-surface-soft mt-4 rounded-lg p-4">
+              <p className="ui-text-muted text-sm font-bold">Total generated</p>
+              <p className="ui-text-heading mt-2 text-3xl">{totalResources}</p>
             </div>
           </div>
         </div>
@@ -129,7 +128,7 @@ export function Dashboard({ onNavigate }) {
           <TriangleAlert className="mt-0.5 shrink-0 text-coral" size={20} aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <h3 className="font-black text-coral">Could not load dashboard summary</h3>
-            <p className="mt-1 leading-6">{error}</p>
+              <p className="ui-text-body mt-1 leading-6">{error}</p>
           </div>
           <Button type="button" variant="secondary" onClick={loadStats}>
             <RefreshCw size={16} aria-hidden="true" />
@@ -147,11 +146,11 @@ export function Dashboard({ onNavigate }) {
               <div className={`grid size-11 place-items-center rounded-lg ${stat.tone}`}>
                 <Icon size={22} aria-hidden="true" />
               </div>
-              <p className="mt-5 text-sm font-bold text-slateboard/58">{stat.label}</p>
+              <p className="ui-text-muted mt-5 text-sm font-bold">{stat.label}</p>
               {isLoading ? (
                 <div className="mt-3 h-9 w-16 rounded-lg bg-slateboard/10 skeleton" />
               ) : (
-                <p className="mt-3 text-3xl font-black text-slateboard">
+                <p className="ui-text-heading mt-3 text-3xl">
                   {stats[stat.key] ?? 0}
                 </p>
               )}

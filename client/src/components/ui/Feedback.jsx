@@ -12,7 +12,7 @@ export function ToastProvider({ children }) {
   }
 
   function showToast({ title, description, tone = "success" }) {
-    const id = crypto.randomUUID();
+    const id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
     setToasts((current) => [...current, { id, title, description, tone }]);
     window.setTimeout(() => removeToast(id), 4200);
   }
@@ -30,7 +30,7 @@ export function ToastProvider({ children }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`animate-toast-in rounded-lg border bg-white p-4 shadow-soft ${
+            className={`ui-surface animate-toast-in rounded-lg p-4 shadow-soft ${
               toast.tone === "error" ? "border-coral/25" : "border-meadow/25"
             }`}
             role={toast.tone === "error" ? "alert" : "status"}
@@ -42,13 +42,13 @@ export function ToastProvider({ children }) {
                 <CheckCircle2 className="mt-0.5 shrink-0 text-meadow" size={20} />
               )}
               <div className="min-w-0 flex-1">
-                <p className="font-black text-slateboard">{toast.title}</p>
+                <p className="ui-text-heading font-black">{toast.title}</p>
                 {toast.description && (
-                  <p className="mt-1 text-sm leading-6 text-slateboard/65">{toast.description}</p>
+                  <p className="ui-text-secondary mt-1 text-sm leading-6">{toast.description}</p>
                 )}
               </div>
               <button
-                className="grid size-8 shrink-0 place-items-center rounded-lg text-slateboard/45 hover:bg-slateboard/5 hover:text-slateboard"
+                className="ui-button ui-button-ghost grid size-8 min-h-0 shrink-0 place-items-center p-0 text-sm"
                 type="button"
                 aria-label="Dismiss notification"
                 onClick={() => removeToast(toast.id)}
@@ -76,17 +76,17 @@ export function useToast() {
 export function LoadingSkeleton({ title = "Generating content", lines = 4 }) {
   return (
     <section
-      className="animate-fade-in rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft"
+      className="ui-surface animate-fade-in rounded-lg p-5 shadow-soft"
       aria-busy="true"
       aria-live="polite"
     >
       <div className="mb-4 flex items-center gap-3">
-        <div className="grid size-10 place-items-center rounded-lg bg-skywash text-slateboard">
+        <div className="ui-surface-soft grid size-10 place-items-center rounded-lg">
           <Loader2 className="animate-spin" size={19} aria-hidden="true" />
         </div>
         <div>
-          <p className="font-black text-slateboard">{title}</p>
-          <p className="text-sm text-slateboard/55">Building a classroom-ready draft...</p>
+          <p className="ui-text-heading font-black">{title}</p>
+          <p className="ui-text-muted text-sm">Building a classroom-ready draft...</p>
         </div>
       </div>
       <div className="grid gap-3">
@@ -108,12 +108,12 @@ export function EmptyState({
   action,
 }) {
   return (
-    <section className="animate-fade-in rounded-lg border border-dashed border-slateboard/20 bg-white p-6 text-center">
-      <div className="mx-auto grid size-12 place-items-center rounded-lg bg-skywash text-slateboard">
+    <section className="ui-surface animate-fade-in rounded-lg border-dashed p-6 text-center">
+      <div className="ui-surface-soft mx-auto grid size-12 place-items-center rounded-lg">
         <Icon size={23} aria-hidden="true" />
       </div>
-      <h3 className="mt-4 font-black text-slateboard">{title}</h3>
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slateboard/60">{description}</p>
+      <h3 className="ui-text-heading mt-4 font-black">{title}</h3>
+      <p className="ui-text-secondary mx-auto mt-2 max-w-md text-sm leading-6">{description}</p>
       {action && <div className="mt-4">{action}</div>}
     </section>
   );
@@ -128,7 +128,7 @@ export function ErrorPage({
   return (
     <div className="grid min-h-[60vh] place-items-center">
       <section
-        className="max-w-xl rounded-lg border border-coral/20 bg-white p-8 text-center shadow-soft"
+        className="ui-surface max-w-xl rounded-lg border-coral/20 p-8 text-center shadow-soft"
         role="alert"
       >
         <div className="mx-auto grid size-14 place-items-center rounded-lg bg-coral/10 text-coral">
@@ -141,8 +141,8 @@ export function ErrorPage({
         <p className="mt-5 text-xs font-black uppercase tracking-[0.18em] text-coral">
           Error {statusCode}
         </p>
-        <h2 className="mt-2 text-2xl font-black text-slateboard">{title}</h2>
-        <p className="mt-3 text-sm leading-6 text-slateboard/65">{description}</p>
+        <h2 className="ui-text-heading mt-2 text-2xl font-black">{title}</h2>
+        <p className="ui-text-secondary mt-3 text-sm leading-6">{description}</p>
         {onReset && (
           <Button className="mt-5" type="button" onClick={onReset}>
             Return to dashboard

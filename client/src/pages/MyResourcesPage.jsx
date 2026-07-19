@@ -184,12 +184,12 @@ export function MyResourcesPage() {
 
   return (
     <div className="grid gap-6">
-      <section className="rounded-lg border border-slateboard/10 bg-white p-5 shadow-soft">
+      <section className="ui-surface rounded-lg p-5 shadow-soft">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <Badge tone="blue">My Resources</Badge>
-            <h2 className="mt-3 text-2xl font-black text-slateboard">Saved teaching resources</h2>
-            <p className="mt-2 text-sm leading-6 text-slateboard/65">
+            <h2 className="ui-text-heading mt-3 text-2xl">Saved teaching resources</h2>
+            <p className="ui-text-secondary mt-2 text-sm leading-6">
               View, edit, delete, duplicate, print, and download the classroom materials you have created.
             </p>
           </div>
@@ -197,7 +197,7 @@ export function MyResourcesPage() {
           <div className="grid gap-3 md:grid-cols-[minmax(14rem,1fr)_12rem_12rem] xl:min-w-[44rem]">
             <Field label="Search">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-3 text-slateboard/40" size={18} />
+                <Search className="ui-text-subtle pointer-events-none absolute left-3 top-3" size={18} />
                 <TextInput
                   className="w-full pl-10"
                   value={filters.search}
@@ -225,7 +225,7 @@ export function MyResourcesPage() {
       </section>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-bold text-slateboard/60">
+        <p className="ui-text-secondary text-sm font-bold">
           {activeTypeLabel} / {pagination.total} saved
         </p>
         <Button type="button" variant="secondary" onClick={() => loadResources(filters)}>
@@ -235,7 +235,7 @@ export function MyResourcesPage() {
       </div>
 
       {error && (
-        <section className="rounded-lg border border-coral/30 bg-coral/10 p-4 text-sm text-coral" role="alert">
+        <section className="rounded-lg border border-coral/30 bg-coral/10 p-4 text-sm font-semibold text-coral" role="alert">
           {error}
         </section>
       )}
@@ -262,10 +262,10 @@ export function MyResourcesPage() {
             <Card key={resource.id} className="flex min-h-56 flex-col">
               <div className="flex items-start justify-between gap-3">
                 <Badge tone={typeTone[resource.type] ?? "green"}>{formatType(resource.type)}</Badge>
-                <span className="text-xs font-bold text-slateboard/45">{formatDate(resource.createdAt)}</span>
+                <span className="ui-text-subtle text-xs font-bold">{formatDate(resource.createdAt)}</span>
               </div>
-              <h3 className="mt-4 line-clamp-2 text-lg font-black text-slateboard">{resource.title}</h3>
-              <p className="mt-2 text-sm text-slateboard/55">Updated {formatDate(resource.updatedAt)}</p>
+              <h3 className="ui-text-heading mt-4 line-clamp-2 text-lg">{resource.title}</h3>
+              <p className="ui-text-muted mt-2 text-sm">Updated {formatDate(resource.updatedAt)}</p>
 
               <div className="mt-auto grid grid-cols-3 gap-2 pt-5">
                 <IconButton label="View" icon={Eye} onClick={() => openResource(resource)} disabled={Boolean(activeAction)} />
@@ -280,8 +280,8 @@ export function MyResourcesPage() {
         </section>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slateboard/10 bg-white p-4">
-        <p className="text-sm font-bold text-slateboard/60">
+      <div className="ui-surface flex flex-wrap items-center justify-between gap-3 rounded-lg p-4">
+        <p className="ui-text-secondary text-sm font-bold">
           Page {pagination.page} of {pagination.totalPages}
         </p>
         <div className="flex gap-2">
@@ -354,17 +354,17 @@ function ResourceModal({
       aria-modal="true"
       aria-labelledby="resource-dialog-title"
     >
-      <section className="max-h-[90vh] w-full max-w-4xl overflow-auto rounded-lg bg-white p-5 shadow-soft">
+      <section className="ui-surface max-h-[90vh] w-full max-w-4xl overflow-auto rounded-lg p-5 shadow-soft">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <Badge tone={typeTone[resource?.type] ?? "blue"}>
               {resource ? formatType(resource.type) : "Opening"}
             </Badge>
-            <h2 id="resource-dialog-title" className="mt-3 text-xl font-black text-slateboard">{resource?.title ?? "Opening resource"}</h2>
+            <h2 id="resource-dialog-title" className="ui-text-heading mt-3 text-xl">{resource?.title ?? "Opening resource"}</h2>
           </div>
           <button
             type="button"
-            className="grid size-10 place-items-center rounded-lg hover:bg-slateboard/5"
+            className="ui-button ui-button-ghost grid size-10 min-h-0 place-items-center p-0"
             aria-label="Close resource dialog"
             onClick={onClose}
           >
@@ -373,7 +373,7 @@ function ResourceModal({
         </div>
 
         {isLoading ? (
-          <div className="flex items-center gap-3 rounded-lg bg-skywash p-4 font-bold text-slateboard">
+          <div className="ui-surface-soft flex items-center gap-3 rounded-lg p-4 font-bold">
             <Loader2 className="animate-spin" size={20} aria-hidden="true" />
             Opening resource...
           </div>
@@ -384,7 +384,7 @@ function ResourceModal({
             </Field>
             <Field label="Resource details">
               <EditableResourceContent value={editContent ?? {}} onChange={setEditContent} />
-              <p className="mt-2 text-xs font-semibold text-slateboard/55">
+              <p className="ui-text-muted mt-2 text-xs font-semibold">
                 Update the wording you want to change, then save.
               </p>
             </Field>
@@ -422,8 +422,8 @@ function EditableResourceContent({ value, onChange }) {
 function renderEditableFields(value, path, onChange) {
   if (Array.isArray(value)) {
     return value.map((item, index) => (
-      <div key={[...path, index].join(".")} className="grid gap-2 rounded-lg bg-white p-3">
-        <p className="text-xs font-black uppercase tracking-[0.12em] text-slateboard/45">
+      <div key={[...path, index].join(".")} className="ui-surface grid gap-2 rounded-lg p-3">
+        <p className="ui-text-subtle text-xs font-black uppercase tracking-[0.12em]">
           Item {index + 1}
         </p>
         {renderEditableFields(item, [...path, index], onChange)}
@@ -436,9 +436,9 @@ function renderEditableFields(value, path, onChange) {
       .filter(([key]) => !["id", "_id", "__v", "createdAt", "updatedAt", "userId", "generatedBy"].includes(key))
       .map(([key, nestedValue]) => (
         <div key={[...path, key].join(".")} className="grid gap-2">
-          <span className="text-sm font-black text-slateboard">{formatFieldLabel(key)}</span>
+          <span className="ui-text-heading text-sm font-black">{formatFieldLabel(key)}</span>
           {nestedValue && typeof nestedValue === "object" ? (
-            <div className="grid gap-3 rounded-lg border border-slateboard/10 bg-white p-3">
+            <div className="ui-surface grid gap-3 rounded-lg p-3">
               {renderEditableFields(nestedValue, [...path, key], onChange)}
             </div>
           ) : (
@@ -498,7 +498,7 @@ function formatFieldLabel(value) {
 
 function ResourceContentPreview({ resource }) {
   return (
-    <div className="max-h-[56vh] overflow-auto rounded-lg bg-chalk p-4 text-sm leading-6 text-slateboard">
+    <div className="ui-text-body max-h-[56vh] overflow-auto rounded-lg bg-chalk p-4 text-sm leading-6">
       {formatResourceForDisplay(resource)
         .split("\n")
         .map((line, index) => (
@@ -512,11 +512,11 @@ function IconButton({ label, icon: Icon, danger = false, ...props }) {
   return (
     <button
       type="button"
-      className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border px-2 text-xs font-bold transition ${
+      className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border px-2 text-xs font-bold transition hover:-translate-y-0.5 ${
         danger
           ? "border-coral/25 text-coral hover:bg-coral/10"
-          : "border-slateboard/10 text-slateboard hover:bg-skywash"
-      } disabled:cursor-not-allowed disabled:opacity-50`}
+          : "border-slateboard/10 text-slateboard hover:border-slateboard/20 hover:bg-skywash"
+      } disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0`}
       {...props}
     >
       <Icon size={15} aria-hidden="true" />
