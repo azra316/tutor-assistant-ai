@@ -110,17 +110,24 @@ Teachers spend hours preparing classroom materials.
 Tutor Assistant AI reduces that work to a few seconds by using AI to generate high-quality, editable, and printable educational resources, allowing educators to focus more on teaching and less on preparation.
 
 ---
+## Why Tutor Assistant AI?
 
-## 🚀 Future Roadmap
+Tutor Assistant AI is built specifically for teachers.
 
-- AI-powered grading
-- Student progress tracking
-- Google Classroom integration
-- Multi-language support
-- Collaborative lesson planning
-- Rich text editor
-- Classroom management
+General AI tools like ChatGPT can generate teaching materials, but teachers often need to write detailed prompts and refine them multiple times to get classroom-ready results.
 
+Tutor Assistant AI simplifies this process by providing a purpose-built interface where teachers can quickly generate:
+
+- Lesson plans
+- Worksheets
+- Homework
+- Quizzes
+- Practice questions
+- Classroom activities
+
+Instead of learning prompt engineering, teachers simply select the subject, grade, topic, and difficulty level . The platform handles the prompt engineering behind the scenes and produces teaching materials in minutes.
+
+Our goal isn't to replace ChatGPT—it's to make AI faster, simpler, and more practical for teachers.
 ---
 
 ## 👩‍💻 Author
